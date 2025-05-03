@@ -1,0 +1,21 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import javafx.geometry.Insets?>
+<?import javafx.scene.control.*?>
+<?import javafx.scene.layout.*?>
+
+<VBox xmlns="http://javafx.com/javafx/17"
+      xmlns:fx="http://javafx.com/fxml/1"
+      fx:controller="com.jorge_hugo_javier.Controlador.CreacionPersonaje"
+      spacing="10" alignment="CENTER" padding="20">
+
+    <Label text="CREACIÓN DE PERSONAJE" style="-fx-font-size: 20px; -fx-font-weight: bold;"/>
+
+    <TextField fx:id="nombreField" promptText="Nombre del personaje" />
+    <TextField fx:id="saludField" promptText="Salud (por ejemplo: 100)" />
+    <TextField fx:id="fuerzaField" promptText="Fuerza (por ejemplo: 10)" />
+    <TextField fx:id="defensaField" promptText="Defensa (por ejemplo: 5)" />
+    <TextField fx:id="velocidadField" promptText="Velocidad (por ejemplo: 3)" />
+
+    <Button text="Crear Personaje" onAction="#crearPersonaje"/>
+</VBox>
