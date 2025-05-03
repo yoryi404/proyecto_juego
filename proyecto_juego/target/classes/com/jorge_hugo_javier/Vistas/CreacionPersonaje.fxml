@@ -1,0 +1,23 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import javafx.scene.text.*?>
+<?import javafx.scene.control.*?>
+<?import java.lang.*?>
+<?import javafx.scene.layout.*?>
+
+
+<VBox maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="400.0" prefWidth="600.0" xmlns="http://javafx.com/javafx/8" xmlns:fx="http://javafx.com/fxml/1" fx:controller="com.jorge_hugo_javier.Controlador.CreacionPersonaje">
+   <children>
+      <Label text="Creacion de personaje" textAlignment="CENTER">
+         <font>
+            <Font name="System Bold Italic" size="30.0" />
+         </font>
+      </Label>
+      <TextField fx:id="nombreField" promptText="Nombre del personaje" />
+      <TextField fx:id="saludField" promptText="Salud" />
+      <TextField fx:id="fuerzaField" promptText="Fuerza " />
+      <TextField fx:id="defensaField" promptText="Defensa " />
+      <TextField fx:id="velocidadField" promptText="Velocidad " />
+      <Button mnemonicParsing="false" onAction="#crearPersonaje" text="Crear personaje" />
+   </children>
+</VBox>
