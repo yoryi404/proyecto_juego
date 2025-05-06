@@ -21,4 +21,5 @@ public class Enemigo extends JuegoCharacter {
             moveTo(newX, newY, map);
         }
     }
+        // Aquí podrías añadir lógica futura como: patrullar, detectar distancia, huir, etc.
 }
