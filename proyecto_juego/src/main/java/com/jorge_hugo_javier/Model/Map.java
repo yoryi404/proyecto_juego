@@ -4,10 +4,11 @@ package com.jorge_hugo_javier.Model;
 import java.io.*;
 import java.util.*;
 
-public class Mapa {
-    private Celda[][] grid;
+public class Map {
+    private Cell[][] grid;
+    
 
-    public void Map(String filename) throws IOException {
+    public Map(String filename) throws IOException {
         List<String> lines = new ArrayList<>();
         try (BufferedReader br = new BufferedReader(new FileReader(filename))) {
             String line;
@@ -18,26 +19,26 @@ public class Mapa {
 
         int rows = lines.size();
         int cols = lines.get(0).length();
-        grid = new Celda[rows][cols];
+        grid = new Cell[rows][cols];
 
         for (int i = 0; i < rows; i++) {
             char[] chars = lines.get(i).toCharArray();
             for (int j = 0; j < cols; j++) {
-                Celda.Type type = (chars[j] == '#') ? Celda.Type.WALL : Celda.Type.FLOOR;
-                grid[i][j] = new Celda(type);
+                Cell.Type type = (chars[j] == '#') ? Cell.Type.WALL : Cell.Type.FLOOR;
+                grid[i][j] = new Cell(type);
             }
         }
     }
 
-    public Celda[][] getGrid() {
+    public Cell[][] getGrid() {
         return grid;
     }
 
-    public Celda getCell(int x, int y) {
+    public Cell getCell(int x, int y) {
         return grid[y][x];
     }
 
     public boolean isInsideBounds(int x, int y) {
-        return y >= 0 && y < grid.length && x >= 0 && x < grid[0].length;
+        return x >= 0 && y >= 0 && x < grid.length && y < grid[0].length;
     }
 }

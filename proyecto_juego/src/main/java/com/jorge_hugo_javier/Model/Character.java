@@ -30,19 +30,19 @@ public abstract class Character {
         health -= damage;
     }
 
-    public void moveTo(int newX, int newY, Mapa map) {
+    public void moveTo(int newX, int newY, Map map) {
         if (!map.isInsideBounds(newX, newY))
             return;
-        Celda newCelda = map.getCell(newX, newY);
-        if (newCelda.isWalkable()) {
-            map.getCell(x, y).setOccupant(null); // vacía la celda actual
+        Cell newCell = map.getCell(newX, newY);
+        if (newCell.isWalkable()) {
+            map.getCell(x, y).setOccupant(null);
             x = newX;
             y = newY;
-            newCelda.setOccupant(this);
+            newCell.setOccupant(this);
         }
     }
 
-    public abstract void takeTurn(Map map, Character player);
+    public abstract void takeTurn(Map map, Character Enemigo,Character Jugador);
 
     public int getX() {
         return x;
