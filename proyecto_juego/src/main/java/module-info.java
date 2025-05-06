@@ -19,4 +19,5 @@ module com.jorge_hugo_javier {
 
     exports com.jorge_hugo_javier.Controlador;
     exports com.jorge_hugo_javier.Model;
+    exports com.jorge_hugo_javier;
 }

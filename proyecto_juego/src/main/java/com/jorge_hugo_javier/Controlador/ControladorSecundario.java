@@ -14,7 +14,7 @@ public class ControladorSecundario {
 
     /**
      * Este método cambia la escena actual y carga CreacionPersonaje.fxml
-     * Puedes llamarlo desde un botón con onAction="#switchToCreacionPersonaje"
+     * Vamos desde el boon Ir a creacion de personaje"
      */
     @FXML
     private void switchToCreacionPersonaje(ActionEvent event) throws IOException {
