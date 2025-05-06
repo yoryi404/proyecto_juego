@@ -1,23 +1,23 @@
 package com.jorge_hugo_javier.Model;
 
-import java.util.Map;
 
-public class Enemigo extends Character {
+public class Enemigo extends JuegoCharacter {
+
     public Enemigo(String name, int health, int attack, int x, int y) {
         super(name, health, attack, x, y);
     }
 
     @Override
-    public void takeTurn(Map map, Character Enemigo,Character Jugador) {
+    public void takeTurn(JuegoMap map, JuegoCharacter enemigo, JuegoCharacter jugador) {
+        int dx = jugador.getX() - this.x;
+        int dy = jugador.getY() - this.y;
 
-        int dx = Jugador.getX() - x;
-        int dy = Jugador.getY() - y;
+        // Ataca si el jugador está adyacente (movimiento Manhattan de 1)
         if (Math.abs(dx) + Math.abs(dy) == 1) {
-            Jugador.receiveDamage(attack);
+            jugador.receiveDamage(this.attack);
         } else {
-
-            int newX = x + Integer.signum(dx);
-            int newY = y + Integer.signum(dy);
+            int newX = this.x + Integer.signum(dx);
+            int newY = this.y + Integer.signum(dy);
             moveTo(newX, newY, map);
         }
     }

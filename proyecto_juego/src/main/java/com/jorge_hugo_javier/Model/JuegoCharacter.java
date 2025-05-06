@@ -1,16 +1,12 @@
 package com.jorge_hugo_javier.Model;
 
-import java.util.Map;
-
-import javafx.scene.control.Cell;
-
-public abstract class Character {
+public abstract class JuegoCharacter {
     protected String name;
     protected int health;
     protected int attack;
     protected int x, y;
 
-    public Character(String name, int health, int attack, int x, int y) {
+    public JuegoCharacter(String name, int health, int attack, int x, int y) {
         this.name = name;
         this.health = health;
         this.attack = attack;
@@ -30,9 +26,10 @@ public abstract class Character {
         health -= damage;
     }
 
-    public void moveTo(int newX, int newY, Map map) {
+    public void moveTo(int newX, int newY, JuegoMap map) {
         if (!map.isInsideBounds(newX, newY))
             return;
+
         Cell newCell = map.getCell(newX, newY);
         if (newCell.isWalkable()) {
             map.getCell(x, y).setOccupant(null);
@@ -42,7 +39,7 @@ public abstract class Character {
         }
     }
 
-    public abstract void takeTurn(Map map, Character Enemigo,Character Jugador);
+    public abstract void takeTurn(JuegoMap map, JuegoCharacter enemigo, JuegoCharacter jugador);
 
     public int getX() {
         return x;

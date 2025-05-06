@@ -4,7 +4,7 @@ public class Cell {
     public enum Type { WALL, FLOOR }
 
     private Type type;
-    private Character occupant;
+    private JuegoCharacter occupant; // ← cambiado aquí
 
     public Cell(Type type) {
         this.type = type;
@@ -18,11 +18,11 @@ public class Cell {
         return type == Type.FLOOR && (occupant == null || occupant.isDead());
     }
 
-    public void setOccupant(Character occupant) {
+    public void setOccupant(JuegoCharacter occupant) { // ← cambiado
         this.occupant = occupant;
     }
 
-    public Character getOccupant() {
+    public JuegoCharacter getOccupant() { // ← cambiado
         return occupant;
     }
 }

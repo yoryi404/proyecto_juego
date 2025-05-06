@@ -4,11 +4,11 @@ package com.jorge_hugo_javier.Model;
 import java.io.*;
 import java.util.*;
 
-public class Map {
+public class JuegoMap {
     private Cell[][] grid;
     
 
-    public Map(String filename) throws IOException {
+    public JuegoMap(String filename) throws IOException {
         List<String> lines = new ArrayList<>();
         try (BufferedReader br = new BufferedReader(new FileReader(filename))) {
             String line;
