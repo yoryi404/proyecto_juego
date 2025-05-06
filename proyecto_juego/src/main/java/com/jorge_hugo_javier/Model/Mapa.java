@@ -5,7 +5,7 @@ import java.io.*;
 import java.util.*;
 
 public class Mapa {
-    private Cell[][] grid;
+    private Celda[][] grid;
 
     public void Map(String filename) throws IOException {
         List<String> lines = new ArrayList<>();
@@ -18,22 +18,22 @@ public class Mapa {
 
         int rows = lines.size();
         int cols = lines.get(0).length();
-        grid = new Cell[rows][cols];
+        grid = new Celda[rows][cols];
 
         for (int i = 0; i < rows; i++) {
             char[] chars = lines.get(i).toCharArray();
             for (int j = 0; j < cols; j++) {
-                Cell.Type type = (chars[j] == '#') ? Cell.Type.WALL : Cell.Type.FLOOR;
-                grid[i][j] = new Cell(type);
+                Celda.Type type = (chars[j] == '#') ? Celda.Type.WALL : Celda.Type.FLOOR;
+                grid[i][j] = new Celda(type);
             }
         }
     }
 
-    public Cell[][] getGrid() {
+    public Celda[][] getGrid() {
         return grid;
     }
 
-    public Cell getCell(int x, int y) {
+    public Celda getCell(int x, int y) {
         return grid[y][x]; // y = fila, x = columna
     }
 

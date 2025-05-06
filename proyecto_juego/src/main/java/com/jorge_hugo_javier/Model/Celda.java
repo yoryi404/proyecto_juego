@@ -1,12 +1,12 @@
 package com.jorge_hugo_javier.Model;
 
-public class Cell {
+public class Celda {
     public enum Type { WALL, FLOOR }
 
     private Type type;
     private Character occupant;
 
-    public Cell(Type type) {
+    public Celda(Type type) {
         this.type = type;
     }
 
