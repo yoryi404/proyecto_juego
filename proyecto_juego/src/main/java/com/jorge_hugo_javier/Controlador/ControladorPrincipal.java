@@ -3,9 +3,11 @@ package com.jorge_hugo_javier.Controlador;
 import javafx.fxml.FXML;
 import javafx.scene.control.Label;
 import javafx.scene.control.ListView;
+import javafx.scene.image.Image;
 import javafx.scene.layout.GridPane;
 import javafx.scene.layout.StackPane;
-
+import javafx.scene.image.Image;
+import javafx.scene.image.ImageView;
 import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.InputStreamReader;
@@ -16,13 +18,20 @@ import com.jorge_hugo_javier.Model.Jugador;
 
 public class ControladorPrincipal {
 
-    @FXML private GridPane gridMapa;
-    @FXML private Label nombreJugador;
-    @FXML private Label saludJugador;
-    @FXML private Label fuerzaJugador;
-    @FXML private Label defensaJugador;
-    @FXML private Label velocidadJugador;
-    @FXML private ListView<String> listaTurnos;
+    @FXML
+    private GridPane gridMapa;
+    @FXML
+    private Label nombreJugador;
+    @FXML
+    private Label saludJugador;
+    @FXML
+    private Label fuerzaJugador;
+    @FXML
+    private Label defensaJugador;
+    @FXML
+    private Label velocidadJugador;
+    @FXML
+    private ListView<String> listaTurnos;
 
     private Jugador jugador;
     private char[][] mapa;
@@ -46,14 +55,14 @@ public class ControladorPrincipal {
     }
 
     /**
-    * Cargar el mapa desde el archivo Nivel1.txt
-    */
+     * Cargar el mapa desde el archivo Nivel1.txt
+     */
     private void cargarMapaDesdeFichero() {
         List<char[]> filas = new ArrayList<>();
 
         try (BufferedReader br = new BufferedReader(
-            new InputStreamReader(getClass().getResourceAsStream("/com/jorge_hugo_javier/Mapa/Nivel1.txt")))) {
-        
+                new InputStreamReader(getClass().getResourceAsStream("/com/jorge_hugo_javier/Mapa/Nivel1.txt")))) {
+
             String linea;
             while ((linea = br.readLine()) != null) {
                 filas.add(linea.toCharArray());
@@ -79,18 +88,30 @@ public class ControladorPrincipal {
                 StackPane panel = new StackPane();
                 panel.setPrefSize(40, 40);
 
+                //Añadir constraint para que sean del mismo tamaño las columnas y las paredes.
+
                 switch (celda) {
                     case '#': // Pared
-                        panel.setStyle("-fx-background-color: #444; -fx-border-color: black;");
+                        Image imgPared = new Image(
+                                getClass().getResourceAsStream("/com/jorge_hugo_javier/Vistas/Pared.jpg"));
+                        ImageView viewPared = new ImageView(imgPared);
+                        viewPared.setFitWidth(40);
+                        viewPared.setFitHeight(40);
+                        panel.getChildren().add(viewPared);
                         break;
                     case '.': // Suelo
-                        panel.setStyle("-fx-background-color: #ddd; -fx-border-color: black;");
+                        Image imgSuelo = new Image(
+                                getClass().getResourceAsStream("/com/jorge_hugo_javier/Vistas/suelo.png"));
+                        ImageView viewSuelo = new ImageView(imgSuelo);
+                        viewSuelo.setFitWidth(40);
+                        viewSuelo.setFitHeight(40);
+                        panel.getChildren().add(viewSuelo);
                         break;
                     default: // Error visual
                         panel.setStyle("-fx-background-color: red;");
                 }
 
-                gridMapa.add(panel, col, fila);  // ¡Ojo!: (columna, fila)
+                gridMapa.add(panel, col, fila); // ¡Ojo!: (columna, fila)
             }
         }
     }
