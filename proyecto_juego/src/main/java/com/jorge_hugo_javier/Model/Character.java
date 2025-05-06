@@ -1,5 +1,9 @@
 package com.jorge_hugo_javier.Model;
 
+import java.util.Map;
+
+import javafx.scene.control.Cell;
+
 public abstract class Character {
     protected String name;
     protected int health;
@@ -26,5 +30,37 @@ public abstract class Character {
         health -= damage;
     }
 
-}
+    public void moveTo(int newX, int newY, Mapa map) {
+        if (!map.isInsideBounds(newX, newY))
+            return;
+        Celda newCelda = map.getCell(newX, newY);
+        if (newCelda.isWalkable()) {
+            map.getCell(x, y).setOccupant(null); // vacía la celda actual
+            x = newX;
+            y = newY;
+            newCelda.setOccupant(this);
+        }
+    }
 
+    public abstract void takeTurn(Map map, Character player);
+
+    public int getX() {
+        return x;
+    }
+
+    public int getY() {
+        return y;
+    }
+
+    public int getHealth() {
+        return health;
+    }
+
+    public int getAttack() {
+        return attack;
+    }
+
+    public String getName() {
+        return name;
+    }
+}

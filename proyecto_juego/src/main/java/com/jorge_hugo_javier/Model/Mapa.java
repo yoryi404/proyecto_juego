@@ -34,7 +34,7 @@ public class Mapa {
     }
 
     public Celda getCell(int x, int y) {
-        return grid[y][x]; // y = fila, x = columna
+        return grid[y][x];
     }
 
     public boolean isInsideBounds(int x, int y) {
