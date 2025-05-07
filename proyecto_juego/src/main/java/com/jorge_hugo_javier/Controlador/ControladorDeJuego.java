@@ -31,7 +31,7 @@ public class ControladorDeJuego {
  System.out.println("Jugador en: " + jugador.getPosX() + "," + jugador.getPosY());
  }
  private void moverEnemigos() {
- for (Enemigo e : mapa.getEnemigos()) {
+ for (Enemigo e : mapa.getEnemigos()) {xx
  e.moverHacia(jugador.getPosX(), jugador.getPosY());
  }
  }
