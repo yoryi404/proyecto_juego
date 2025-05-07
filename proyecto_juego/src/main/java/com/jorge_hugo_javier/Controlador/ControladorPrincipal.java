@@ -35,6 +35,8 @@ public class ControladorPrincipal {
 
     private Jugador jugador;
     private char[][] mapa;
+    private int jugadorFila;
+    private int jugadorCol;
 
     // Método para recibir el jugador desde CreacionPersonaje
     public void setJugador(Jugador jugador) {
@@ -44,6 +46,7 @@ public class ControladorPrincipal {
         // Aquí añadimos carga y dibujo del mapa
         cargarMapaDesdeFichero();
         dibujarMapa();
+        buscarPosicionInicialJugador();
     }
 
     private void actualizarEstadisticas() {
@@ -106,12 +109,38 @@ public class ControladorPrincipal {
                         viewSuelo.setFitWidth(40);
                         viewSuelo.setFitHeight(40);
                         panel.getChildren().add(viewSuelo);
+
+                        //Jugador
+                        if (fila == jugadorFila && col == jugadorCol) {
+                            Image imgJugador = new Image(
+                                    getClass().getResourceAsStream("/com/jorge_hugo_javier/Vistas/jugador.png"));
+                            ImageView viewJugador = new ImageView(imgJugador);
+                            viewJugador.setFitWidth(35); // Un poco más pequeño que la celda
+                            viewJugador.setFitHeight(35);
+                            panel.getChildren().add(viewJugador);
+                        }
                         break;
+
                     default: // Error visual
                         panel.setStyle("-fx-background-color: red;");
                 }
 
                 gridMapa.add(panel, col, fila); // ¡Ojo!: (columna, fila)
+            }
+        }
+    }
+
+    /**
+     * Buscar hueco libre en el mapa para colocar al jugador
+     */
+    private void buscarPosicionInicialJugador() {
+        for (int fila = 0; fila < mapa.length; fila++) {
+            for (int col = 0; col < mapa[fila].length; col++) {
+                if (mapa[fila][col] == '.') {
+                    jugadorFila = fila;
+                    jugadorCol = col;
+                    return;
+                }
             }
         }
     }
