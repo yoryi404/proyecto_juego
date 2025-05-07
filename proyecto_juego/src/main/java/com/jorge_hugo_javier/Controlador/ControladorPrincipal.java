@@ -6,7 +6,8 @@ import javafx.scene.control.ListView;
 import javafx.scene.image.Image;
 import javafx.scene.layout.GridPane;
 import javafx.scene.layout.StackPane;
-import javafx.scene.image.Image;
+import javafx.scene.layout.ColumnConstraints;
+import javafx.scene.layout.RowConstraints;
 import javafx.scene.image.ImageView;
 import java.io.BufferedReader;
 import java.io.IOException;
@@ -78,17 +79,33 @@ public class ControladorPrincipal {
     /**
      * Pintar el mapa en el GridPane
      */
+
     private void dibujarMapa() {
         gridMapa.getChildren().clear();
+        gridMapa.getColumnConstraints().clear();
+        gridMapa.getRowConstraints().clear();
 
-        for (int fila = 0; fila < mapa.length; fila++) {
-            for (int col = 0; col < mapa[fila].length; col++) {
+        int numFilas = mapa.length;
+        int numCols = mapa[0].length;
+
+        // Establecer el tamaño fijo de cada columna
+        for (int i = 0; i < numCols; i++) {
+            ColumnConstraints colConst = new ColumnConstraints(40);
+            gridMapa.getColumnConstraints().add(colConst);
+        }
+
+        // Establecer el tamaño fijo de cada fila
+        for (int i = 0; i < numFilas; i++) {
+            RowConstraints rowConst = new RowConstraints(40);
+            gridMapa.getRowConstraints().add(rowConst);
+        }
+
+        for (int fila = 0; fila < numFilas; fila++) {
+            for (int col = 0; col < numCols; col++) {
                 char celda = mapa[fila][col];
 
                 StackPane panel = new StackPane();
                 panel.setPrefSize(40, 40);
-
-                //Añadir constraint para que sean del mismo tamaño las columnas y las paredes.
 
                 switch (celda) {
                     case '#': // Pared
@@ -107,11 +124,11 @@ public class ControladorPrincipal {
                         viewSuelo.setFitHeight(40);
                         panel.getChildren().add(viewSuelo);
                         break;
-                    default: // Error visual
+                    default:
                         panel.setStyle("-fx-background-color: red;");
                 }
 
-                gridMapa.add(panel, col, fila); // ¡Ojo!: (columna, fila)
+                gridMapa.add(panel, col, fila);
             }
         }
     }
