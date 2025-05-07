@@ -68,4 +68,10 @@ public class Jugador {
                ", velocidad=" + velocidad +
                '}';
     }
+
+    public void moverArriba() { if (posY > 0) posY--; }
+    public void moverAbajo() { if (posY < limiteY) posY++; }
+    public void moverIzquierda() { if (posX > 0) posX--; }
+    public void moverDerecha() { if (posX < limiteX) posX++; }
+    
 }

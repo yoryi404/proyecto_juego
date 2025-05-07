@@ -62,4 +62,6 @@ public class CreacionPersonaje {
         alert.setContentText(mensaje);
         alert.showAndWait();
     }
+
+    
 }

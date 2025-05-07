@@ -22,4 +22,11 @@ public class Enemigo extends JuegoCharacter {
         }
     }
         // Aquí podrías añadir lógica futura como: patrullar, detectar distancia, huir, etc.
+
+
+        public void moverHacia(int xJugador, int yJugador) {
+            if (x < xJugador) x++;
+            else if (x > xJugador) x--;
+            if (y < yJugador) y++;
+            else if (y > yJugador) y--;
 }

@@ -1,20 +1,27 @@
 package com.jorge_hugo_javier.Controlador;
 
+
 import javafx.fxml.FXML;
+import javafx.fxml.FXMLLoader;
+import javafx.scene.Parent;
+import javafx.scene.Scene;
 import javafx.scene.control.Label;
 import javafx.scene.control.ListView;
 import javafx.scene.image.Image;
-import javafx.scene.layout.GridPane;
-import javafx.scene.layout.StackPane;
-import javafx.scene.layout.ColumnConstraints;
-import javafx.scene.layout.RowConstraints;
 import javafx.scene.image.ImageView;
+import javafx.scene.layout.ColumnConstraints;
+import javafx.scene.layout.GridPane;
+import javafx.scene.layout.RowConstraints;
+import javafx.scene.layout.StackPane;
+import javafx.stage.Stage;
+
 import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.InputStreamReader;
 import java.util.ArrayList;
 import java.util.List;
 
+import com.jorge_hugo_javier.Model.JuegoMap;
 import com.jorge_hugo_javier.Model.Jugador;
 
 public class ControladorPrincipal {
@@ -35,7 +42,7 @@ public class ControladorPrincipal {
     private ListView<String> listaTurnos;
 
     private Jugador jugador;
-    private char[][] mapa;
+    private JuegoMap mapa;
     private int jugadorFila;
     private int jugadorCol;
 
@@ -48,6 +55,23 @@ public class ControladorPrincipal {
         cargarMapaDesdeFichero();
         dibujarMapa();
         buscarPosicionInicialJugador();
+
+        // Cargar la vista del juego y pasar datos al GameController
+        try {
+            FXMLLoader loader = new FXMLLoader(
+                    getClass().getResource("/com/jorge_hugo_javier/Vistas/Game.fxml"));
+            Parent root = loader.load();
+            ControladorDeJuego ControladorDeJuego = loader.getController();
+            ControladorDeJuego.setJugador(jugador);
+            ControladorDeJuego.setMapa(mapa);
+
+            // Opcional: cambiar la escena actual al nuevo layout
+            Stage stage = (Stage) gridMapa.getScene().getWindow();
+            stage.setScene(new Scene(root));
+            stage.show();
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
     }
 
     private void actualizarEstadisticas() {
@@ -65,7 +89,8 @@ public class ControladorPrincipal {
         List<char[]> filas = new ArrayList<>();
 
         try (BufferedReader br = new BufferedReader(
-                new InputStreamReader(getClass().getResourceAsStream("/com/jorge_hugo_javier/Mapa/Nivel1.txt")))) {
+                new InputStreamReader(getClass().getResourceAsStream(
+                        "/com/jorge_hugo_javier/Mapa/Nivel1.txt")))) {
 
             String linea;
             while ((linea = br.readLine()) != null) {
@@ -82,7 +107,6 @@ public class ControladorPrincipal {
     /**
      * Pintar el mapa en el GridPane
      */
-
     private void dibujarMapa() {
         gridMapa.getChildren().clear();
         gridMapa.getColumnConstraints().clear();
@@ -113,7 +137,8 @@ public class ControladorPrincipal {
                 switch (celda) {
                     case '#': // Pared
                         Image imgPared = new Image(
-                                getClass().getResourceAsStream("/com/jorge_hugo_javier/Vistas/Pared.jpg"));
+                                getClass().getResourceAsStream(
+                                        "/com/jorge_hugo_javier/Vistas/Pared.jpg"));
                         ImageView viewPared = new ImageView(imgPared);
                         viewPared.setFitWidth(40);
                         viewPared.setFitHeight(40);
@@ -121,23 +146,24 @@ public class ControladorPrincipal {
                         break;
                     case '.': // Suelo
                         Image imgSuelo = new Image(
-                                getClass().getResourceAsStream("/com/jorge_hugo_javier/Vistas/suelo.png"));
+                                getClass().getResourceAsStream(
+                                        "/com/jorge_hugo_javier/Vistas/suelo.png"));
                         ImageView viewSuelo = new ImageView(imgSuelo);
                         viewSuelo.setFitWidth(40);
                         viewSuelo.setFitHeight(40);
                         panel.getChildren().add(viewSuelo);
 
-                        //Jugador
+                        // Jugador
                         if (fila == jugadorFila && col == jugadorCol) {
                             Image imgJugador = new Image(
-                                    getClass().getResourceAsStream("/com/jorge_hugo_javier/Vistas/jugador.png"));
+                                    getClass().getResourceAsStream(
+                                            "/com/jorge_hugo_javier/Vistas/jugador.png"));
                             ImageView viewJugador = new ImageView(imgJugador);
                             viewJugador.setFitWidth(35); // Un poco más pequeño que la celda
                             viewJugador.setFitHeight(35);
                             panel.getChildren().add(viewJugador);
                         }
                         break;
-
                     default: // Error visual
                         panel.setStyle("-fx-background-color: red;");
                 }
