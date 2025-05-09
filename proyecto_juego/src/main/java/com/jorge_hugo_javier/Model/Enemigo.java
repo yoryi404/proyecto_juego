@@ -25,8 +25,30 @@ public class Enemigo extends JuegoCharacter {
 
 
         public void moverHacia(int xJugador, int yJugador) {
+            int x = this.getX();
+            int y = this.getY();
+    
             if (x < xJugador) x++;
             else if (x > xJugador) x--;
             if (y < yJugador) y++;
             else if (y > yJugador) y--;
+    
+            this.setX(x);
+            this.setY(y);
+        }
+
+        private void setY(int y) {
+            
+            throw new UnsupportedOperationException("Unimplemented method 'setY'");
+        }
+
+        private void setX(int x) {
+            
+            throw new UnsupportedOperationException("Unimplemented method 'setX'");
+        }
+
+        public String getNombre() {
+           
+            throw new UnsupportedOperationException("Unimplemented method 'getNombre'");
+        }
 }

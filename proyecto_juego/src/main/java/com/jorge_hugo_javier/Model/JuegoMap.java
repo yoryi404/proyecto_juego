@@ -6,6 +6,7 @@ import java.util.*;
 
 public class JuegoMap {
     private Cell[][] grid;
+    public int length;
     
 
     public JuegoMap(String filename) throws IOException {
@@ -40,5 +41,10 @@ public class JuegoMap {
 
     public boolean isInsideBounds(int x, int y) {
         return x >= 0 && y >= 0 && x < grid.length && y < grid[0].length;
+    }
+
+    public Enemigo[] getEnemigos() {
+       
+        throw new UnsupportedOperationException("Unimplemented method 'getEnemigos'");
     }
 }
