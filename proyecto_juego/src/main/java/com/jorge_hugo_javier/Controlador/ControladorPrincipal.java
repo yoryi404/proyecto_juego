@@ -42,7 +42,7 @@ public class ControladorPrincipal {
     private ListView<String> listaTurnos;
 
     private Jugador jugador;
-    private JuegoMap mapa;
+   protected char[][] mapa;
     private int jugadorFila;
     private int jugadorCol;
 
