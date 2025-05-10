@@ -1,22 +1,43 @@
 <?xml version="1.0" encoding="UTF-8"?>
 
-<?import javafx.scene.text.*?>
-<?import javafx.scene.control.*?>
-<?import java.lang.*?>
-<?import javafx.scene.layout.*?>
+<?import javafx.scene.control.Button?>
+<?import javafx.scene.control.Label?>
+<?import javafx.scene.control.TextField?>
+<?import javafx.scene.layout.Pane?>
+<?import javafx.scene.layout.VBox?>
+<?import javafx.scene.text.Font?>
 
-<VBox maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="400.0" prefWidth="600.0" xmlns="http://javafx.com/javafx/8" xmlns:fx="http://javafx.com/fxml/1" fx:controller="com.jorge_hugo_javier.Controlador.CreacionPersonaje">
+<VBox maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="629.0" prefWidth="1036.0" xmlns="http://javafx.com/javafx/23.0.1" xmlns:fx="http://javafx.com/fxml/1" fx:controller="com.jorge_hugo_javier.Controlador.CreacionPersonaje">
    <children>
-      <Label text="Creacion de personaje" textAlignment="CENTER">
+      <Label alignment="CENTER" contentDisplay="CENTER" prefHeight="45.0" prefWidth="918.0" text="Creación de personaje" textAlignment="CENTER" textFill="#b95656" wrapText="true">
          <font>
             <Font name="System Bold Italic" size="30.0" />
          </font>
       </Label>
-      <TextField fx:id="nombreField" promptText="Nombre del personaje" />
-      <TextField fx:id="saludField" promptText="Salud" />
-      <TextField fx:id="fuerzaField" promptText="Fuerza " />
-      <TextField fx:id="defensaField" promptText="Defensa " />
-      <TextField fx:id="velocidadField" promptText="Velocidad " />
-      <Button mnemonicParsing="false" onAction="#crearPersonaje" text="Crear personaje" />
+      <TextField fx:id="nombreField" prefHeight="25.0" prefWidth="851.0" promptText="Nombre del personaje" scaleShape="false">
+         <font>
+            <Font size="15.0" />
+         </font></TextField>
+      <TextField fx:id="saludField" promptText="Salud">
+         <font>
+            <Font size="15.0" />
+         </font></TextField>
+      <TextField fx:id="fuerzaField" promptText="Fuerza ">
+         <font>
+            <Font size="15.0" />
+         </font></TextField>
+      <TextField fx:id="defensaField" promptText="Defensa ">
+         <font>
+            <Font size="15.0" />
+         </font></TextField>
+      <TextField fx:id="velocidadField" prefWidth="600.0" promptText="Velocidad ">
+         <font>
+            <Font size="15.0" />
+         </font></TextField>
+      <Button alignment="CENTER" contentDisplay="CENTER" mnemonicParsing="false" onAction="#crearPersonaje" prefHeight="40.0" prefWidth="150.0" text="Crear personaje" textFill="#b95656">
+         <font>
+            <Font size="15.0" />
+         </font></Button>
+      <Pane prefHeight="394.0" prefWidth="871.0" scaleShape="false" />
    </children>
 </VBox>

@@ -1,0 +1,14 @@
+.text-field {
+    -fx-background-color: rgba(255,255,255,0.2);
+    -fx-text-fill: rgb(0, 0, 0);
+    -fx-font-size: 14px;
+    -fx-prompt-text-fill: #585252;
+    -fx-border-color: #999;
+}
+
+.button {
+    -fx-background-color: #572f2f;
+    -fx-text-fill: white;
+    -fx-font-weight: bold;
+    -fx-border-radius: 5;
+}

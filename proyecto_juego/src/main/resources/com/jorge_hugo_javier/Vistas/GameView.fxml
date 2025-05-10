@@ -7,10 +7,11 @@
 <?import javafx.scene.layout.GridPane?>
 <?import javafx.scene.layout.RowConstraints?>
 <?import javafx.scene.layout.VBox?>
+<?import javafx.scene.text.Font?>
 
-<BorderPane maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="400.0" prefWidth="600.0" xmlns="http://javafx.com/javafx/23.0.1" xmlns:fx="http://javafx.com/fxml/1" fx:controller="com.jorge_hugo_javier.Controlador.ControladorPrincipal">
+<BorderPane maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="773.0" prefWidth="1072.0" xmlns="http://javafx.com/javafx/23.0.1" xmlns:fx="http://javafx.com/fxml/1" fx:controller="com.jorge_hugo_javier.Controlador.ControladorPrincipal">
    <center>
-      <GridPane fx:id="gridMapa" BorderPane.alignment="CENTER">
+      <GridPane fx:id="gridMapa" prefHeight="709.0" prefWidth="0.0" BorderPane.alignment="CENTER">
         <columnConstraints>
           <ColumnConstraints hgrow="SOMETIMES" minWidth="10.0" prefWidth="100.0" />
           <ColumnConstraints hgrow="SOMETIMES" minWidth="10.0" prefWidth="100.0" />
@@ -26,14 +27,32 @@
       <ListView fx:id="listaTurnos" prefHeight="0.0" prefWidth="600.0" BorderPane.alignment="CENTER" />
    </bottom>
    <left>
-      <VBox prefHeight="200.0" prefWidth="100.0" BorderPane.alignment="CENTER">
+      <VBox prefHeight="771.0" prefWidth="183.0" BorderPane.alignment="CENTER">
          <children>
-            <Label fx:id="nombreJugador" text="Nombre" />
-            <Label fx:id="saludJugador" text="Salud" />
-            <Label fx:id="fuerzaJugador" text="Fuerza" />
-            <Label fx:id="defensaJugador" text="Defensa" />
-            <Label fx:id="velocidadJugador" text="Velocidad" />
-            <Label fx:id="estadisticasJugador" text="Estadísticas" />
+            <Label fx:id="nombreJugador" prefHeight="30.0" prefWidth="186.0" text="Nombre: ">
+               <font>
+                  <Font size="15.0" />
+               </font></Label>
+            <Label fx:id="saludJugador" prefHeight="30.0" prefWidth="186.0" text="Salud: ">
+               <font>
+                  <Font size="15.0" />
+               </font></Label>
+            <Label fx:id="fuerzaJugador" prefHeight="30.0" prefWidth="183.0" text="Fuerza: ">
+               <font>
+                  <Font size="15.0" />
+               </font></Label>
+            <Label fx:id="defensaJugador" prefHeight="30.0" prefWidth="186.0" text="Defensa: ">
+               <font>
+                  <Font size="15.0" />
+               </font></Label>
+            <Label fx:id="velocidadJugador" prefHeight="30.0" prefWidth="183.0" text="Velocidad: ">
+               <font>
+                  <Font size="15.0" />
+               </font></Label>
+            <Label fx:id="estadisticasJugador" prefHeight="30.0" prefWidth="183.0" text="Estadísticas: ">
+               <font>
+                  <Font size="15.0" />
+               </font></Label>
          </children>
       </VBox>
    </left>

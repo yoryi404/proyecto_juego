@@ -160,7 +160,7 @@ public class ControladorPrincipal {
                         panel.getChildren().add(viewSuelo);
 
                         // Jugador
-                        if (fila == jugadorFila && col == jugadorCol) {
+                        if (fila == jugador.getPosY() && col == jugador.getPosX()) {
                             Image imgJugador = new Image(getClass().getResourceAsStream(
                                     "/com/jorge_hugo_javier/Vistas/jugador.png"));
                             ImageView viewJugador = new ImageView(imgJugador);
@@ -189,6 +189,7 @@ public class ControladorPrincipal {
                 if (grid[fila][col].getType() == Cell.Type.FLOOR) {
                     jugadorFila = fila;
                     jugadorCol = col;
+                    jugador.setPosicion(col, fila); 
                     return;
                 }
             }

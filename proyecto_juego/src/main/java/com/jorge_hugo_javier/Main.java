@@ -12,8 +12,12 @@ public class Main extends Application {
         FXMLLoader loader = new FXMLLoader(getClass().getResource("/com/jorge_hugo_javier/Vistas/CreacionPersonaje.fxml"));
         Parent root = loader.load();
 
+        Scene scene = new Scene(root);
+
+        scene.getStylesheets().add(getClass().getResource("/com/jorge_hugo_javier/Vistas/estilo.css").toExternalForm());
+
         primaryStage.setTitle("Juego de Mazmorras - Crear Personaje");
-        primaryStage.setScene(new Scene(root));
+        primaryStage.setScene(scene);
         primaryStage.show();
     }
 
