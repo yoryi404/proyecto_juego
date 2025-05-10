@@ -7,6 +7,8 @@ public class Jugador {
     private int fuerza;
     private int defensa;
     private int velocidad;
+    private int posX;
+    private int posY;
 
     private int posX;
     private int posY;
@@ -100,6 +102,19 @@ public class Jugador {
     public void setVelocidad(int velocidad) {
         this.velocidad = velocidad;
     }
+
+    public int getPosX() {
+    return posX;
+}
+
+public int getPosY() {
+    return posY;
+}
+
+public void setPosicion(int x, int y) {
+    this.posX = x;
+    this.posY = y;
+}
 
     @Override
     public String toString() {
