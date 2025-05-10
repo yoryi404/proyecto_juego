@@ -1,7 +1,9 @@
 package com.jorge_hugo_javier.Model;
 
 public class Cell {
-    public enum Type { WALL, FLOOR }
+    public enum Type {
+        WALL, FLOOR
+    }
 
     private Type type;
     private JuegoCharacter occupant; // ← cambiado aquí
@@ -25,4 +27,16 @@ public class Cell {
     public JuegoCharacter getOccupant() { // ← cambiado
         return occupant;
     }
+
+    private char simboloOriginal;
+
+    public Cell(Type type, char simbolo) {
+        this.type = type;
+        this.simboloOriginal = simbolo;
+    }
+
+    public char getSimboloOriginal() {
+        return simboloOriginal;
+    }
+
 }

@@ -5,29 +5,22 @@ import java.util.*;
 
 public class JuegoMap {
     private Cell[][] grid;
-    private List<Enemigo> enemigos = new ArrayList<>(); // ✅ nuevo campo
+    private List<Enemigo> enemigos = new ArrayList<>(); 
 
-    public JuegoMap(String filename) throws IOException {
-        List<String> lines = new ArrayList<>();
-        try (BufferedReader br = new BufferedReader(new FileReader(filename))) {
-            String line;
-            while ((line = br.readLine()) != null) {
-                lines.add(line);
-            }
-        }
+    public JuegoMap(List<String> lines) {
+    int rows = lines.size();
+    int cols = lines.get(0).length();
+    grid = new Cell[rows][cols];
 
-        int rows = lines.size();
-        int cols = lines.get(0).length();
-        grid = new Cell[rows][cols];
-
-        for (int i = 0; i < rows; i++) {
-            char[] chars = lines.get(i).toCharArray();
-            for (int j = 0; j < cols; j++) {
-                Cell.Type type = (chars[j] == '#') ? Cell.Type.WALL : Cell.Type.FLOOR;
-                grid[i][j] = new Cell(type);
-            }
+    for (int i = 0; i < rows; i++) {
+        char[] chars = lines.get(i).toCharArray();
+        for (int j = 0; j < cols; j++) {
+            Cell.Type type = (chars[j] == '#') ? Cell.Type.WALL : Cell.Type.FLOOR;
+            grid[i][j] = new Cell(type, chars[j]);
         }
     }
+}
+
 
     public void addEnemigo(Enemigo e) {
         enemigos.add(e);

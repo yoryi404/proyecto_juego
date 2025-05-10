@@ -41,6 +41,8 @@ public class ControladorPrincipal {
     private Label velocidadJugador;
     @FXML
     private ListView<String> listaTurnos;
+    @FXML
+    private Label estadisticasJugador;
 
     private Jugador jugador;
     protected JuegoMap mapa;
@@ -88,20 +90,22 @@ public class ControladorPrincipal {
      * Cargar el mapa desde el archivo Nivel1.txt
      */
     private void cargarMapaDesdeFichero() {
-        List<char[]> filas = new ArrayList<>();
-
         try (BufferedReader br = new BufferedReader(
-                new InputStreamReader(getClass().getResourceAsStream(
-                        "/com/jorge_hugo_javier/Mapa/Nivel1.txt")))) {
+                new InputStreamReader(getClass().getResourceAsStream("/com/jorge_hugo_javier/Mapa/Nivel1.txt")))) {
 
+            List<String> lineas = new ArrayList<>();
             String linea;
             while ((linea = br.readLine()) != null) {
-                filas.add(linea.toCharArray());
+                lineas.add(linea);
             }
+
+            mapa = new JuegoMap(lineas);
+            // Ahora que mapa existe, ya podemos añadir enemigos
             Enemigo enemigo1 = new Enemigo("Goblin", 10, 2, 1, 1);
-            mapa.addEnemigo(enemigo1);
             Enemigo enemigo2 = new Enemigo("Orco", 15, 3, 2, 1);
+            mapa.addEnemigo(enemigo1);
             mapa.addEnemigo(enemigo2);
+
         } catch (IOException e) {
             e.printStackTrace();
         }
@@ -135,34 +139,40 @@ public class ControladorPrincipal {
 
                 StackPane panel = new StackPane();
                 panel.setPrefSize(40, 40);
+                char simbolo = celda.getSimboloOriginal();
 
-                if (celda.getType() == Cell.Type.WALL) {
-                    Image imgPared = new Image(
-                            getClass().getResourceAsStream("/com/jorge_hugo_javier/Vistas/Pared.jpg"));
-                    ImageView viewPared = new ImageView(imgPared);
-                    viewPared.setFitWidth(40);
-                    viewPared.setFitHeight(40);
-                    panel.getChildren().add(viewPared);
-                } else if (celda.getType() == Cell.Type.FLOOR) {
-                    Image imgSuelo = new Image(
-                            getClass().getResourceAsStream("/com/jorge_hugo_javier/Vistas/suelo.png"));
-                    ImageView viewSuelo = new ImageView(imgSuelo);
-                    viewSuelo.setFitWidth(40);
-                    viewSuelo.setFitHeight(40);
-                    panel.getChildren().add(viewSuelo);
+                switch (simbolo) {
+                    case '#': // Pared
+                        Image imgPared = new Image(getClass().getResourceAsStream(
+                                "/com/jorge_hugo_javier/Vistas/Pared.jpg"));
+                        ImageView viewPared = new ImageView(imgPared);
+                        viewPared.setFitWidth(40);
+                        viewPared.setFitHeight(40);
+                        panel.getChildren().add(viewPared);
+                        break;
 
-                    if (fila == jugadorFila && col == jugadorCol) {
-                        Image imgJugador = new Image(
-                                getClass().getResourceAsStream("/com/jorge_hugo_javier/Vistas/jugador.png"));
-                        ImageView viewJugador = new ImageView(imgJugador);
-                        viewJugador.setFitWidth(35);
-                        viewJugador.setFitHeight(35);
-                        panel.getChildren().add(viewJugador);
-                    }
-                } else {
-                    panel.setStyle("-fx-background-color: red;");
+                    case '.': // Suelo
+                        Image imgSuelo = new Image(getClass().getResourceAsStream(
+                                "/com/jorge_hugo_javier/Vistas/suelo.png"));
+                        ImageView viewSuelo = new ImageView(imgSuelo);
+                        viewSuelo.setFitWidth(40);
+                        viewSuelo.setFitHeight(40);
+                        panel.getChildren().add(viewSuelo);
+
+                        // Jugador
+                        if (fila == jugadorFila && col == jugadorCol) {
+                            Image imgJugador = new Image(getClass().getResourceAsStream(
+                                    "/com/jorge_hugo_javier/Vistas/jugador.png"));
+                            ImageView viewJugador = new ImageView(imgJugador);
+                            viewJugador.setFitWidth(35);
+                            viewJugador.setFitHeight(35);
+                            panel.getChildren().add(viewJugador);
+                        }
+                        break;
+
+                    default:
+                        panel.setStyle("-fx-background-color: red;");
                 }
-
                 gridMapa.add(panel, col, fila);
             }
         }
