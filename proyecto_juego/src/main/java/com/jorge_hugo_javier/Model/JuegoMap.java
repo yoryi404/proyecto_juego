@@ -41,4 +41,8 @@ public class JuegoMap {
     public boolean isInsideBounds(int x, int y) {
         return x >= 0 && y >= 0 && x < grid.length && y < grid[0].length;
     }
+
+    public void addEnemigo(Enemigo enemigo1) {
+        throw new UnsupportedOperationException("Unimplemented method 'addEnemigo'");
+    }
 }
