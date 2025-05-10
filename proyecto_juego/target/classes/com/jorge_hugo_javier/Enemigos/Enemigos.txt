@@ -1,4 +1,0 @@
-(nombre, vida, ataque, x, y)
-
-Goblin,3,1,2,2
-Orco,5,2,4,1
