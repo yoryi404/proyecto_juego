@@ -1,13 +1,11 @@
 package com.jorge_hugo_javier.Model;
 
-
 import java.io.*;
 import java.util.*;
 
 public class JuegoMap {
     private Cell[][] grid;
-    public int length;
-    
+    private List<Enemigo> enemigos = new ArrayList<>(); // ✅ nuevo campo
 
     public JuegoMap(String filename) throws IOException {
         List<String> lines = new ArrayList<>();
@@ -31,6 +29,14 @@ public class JuegoMap {
         }
     }
 
+    public void addEnemigo(Enemigo e) {
+        enemigos.add(e);
+    }
+
+    public List<Enemigo> getEnemigos() {
+        return enemigos;
+    }
+
     public Cell[][] getGrid() {
         return grid;
     }
@@ -40,11 +46,6 @@ public class JuegoMap {
     }
 
     public boolean isInsideBounds(int x, int y) {
-        return x >= 0 && y >= 0 && x < grid.length && y < grid[0].length;
-    }
-
-    public Enemigo[] getEnemigos() {
-       
-        throw new UnsupportedOperationException("Unimplemented method 'getEnemigos'");
+        return x >= 0 && y >= 0 && x < grid[0].length && y < grid.length;
     }
 }

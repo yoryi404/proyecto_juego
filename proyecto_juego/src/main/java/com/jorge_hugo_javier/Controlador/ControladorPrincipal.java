@@ -1,6 +1,5 @@
 package com.jorge_hugo_javier.Controlador;
 
-
 import javafx.fxml.FXML;
 import javafx.fxml.FXMLLoader;
 import javafx.scene.Parent;
@@ -21,6 +20,8 @@ import java.io.InputStreamReader;
 import java.util.ArrayList;
 import java.util.List;
 
+import com.jorge_hugo_javier.Model.Cell;
+import com.jorge_hugo_javier.Model.Enemigo;
 import com.jorge_hugo_javier.Model.JuegoMap;
 import com.jorge_hugo_javier.Model.Jugador;
 
@@ -42,7 +43,7 @@ public class ControladorPrincipal {
     private ListView<String> listaTurnos;
 
     private Jugador jugador;
-   protected char[][] mapa;
+    protected JuegoMap mapa;
     private int jugadorFila;
     private int jugadorCol;
 
@@ -72,6 +73,7 @@ public class ControladorPrincipal {
         } catch (IOException e) {
             e.printStackTrace();
         }
+
     }
 
     private void actualizarEstadisticas() {
@@ -96,9 +98,10 @@ public class ControladorPrincipal {
             while ((linea = br.readLine()) != null) {
                 filas.add(linea.toCharArray());
             }
-
-            mapa = filas.toArray(new char[0][]);
-
+            Enemigo enemigo1 = new Enemigo("Goblin", 10, 2, 1, 1);
+            mapa.addEnemigo(enemigo1);
+            Enemigo enemigo2 = new Enemigo("Orco", 15, 3, 2, 1);
+            mapa.addEnemigo(enemigo2);
         } catch (IOException e) {
             e.printStackTrace();
         }
@@ -112,16 +115,15 @@ public class ControladorPrincipal {
         gridMapa.getColumnConstraints().clear();
         gridMapa.getRowConstraints().clear();
 
-        int numFilas = mapa.length;
-        int numCols = mapa[0].length;
+        Cell[][] grid = mapa.getGrid();
+        int numFilas = grid.length;
+        int numCols = grid[0].length;
 
-        // Establecer el tamaño fijo de cada columna
         for (int i = 0; i < numCols; i++) {
             ColumnConstraints colConst = new ColumnConstraints(40);
             gridMapa.getColumnConstraints().add(colConst);
         }
 
-        // Establecer el tamaño fijo de cada fila
         for (int i = 0; i < numFilas; i++) {
             RowConstraints rowConst = new RowConstraints(40);
             gridMapa.getRowConstraints().add(rowConst);
@@ -129,46 +131,39 @@ public class ControladorPrincipal {
 
         for (int fila = 0; fila < numFilas; fila++) {
             for (int col = 0; col < numCols; col++) {
-                char celda = mapa[fila][col];
+                Cell celda = grid[fila][col];
 
                 StackPane panel = new StackPane();
                 panel.setPrefSize(40, 40);
 
-                switch (celda) {
-                    case '#': // Pared
-                        Image imgPared = new Image(
-                                getClass().getResourceAsStream(
-                                        "/com/jorge_hugo_javier/Vistas/Pared.jpg"));
-                        ImageView viewPared = new ImageView(imgPared);
-                        viewPared.setFitWidth(40);
-                        viewPared.setFitHeight(40);
-                        panel.getChildren().add(viewPared);
-                        break;
-                    case '.': // Suelo
-                        Image imgSuelo = new Image(
-                                getClass().getResourceAsStream(
-                                        "/com/jorge_hugo_javier/Vistas/suelo.png"));
-                        ImageView viewSuelo = new ImageView(imgSuelo);
-                        viewSuelo.setFitWidth(40);
-                        viewSuelo.setFitHeight(40);
-                        panel.getChildren().add(viewSuelo);
+                if (celda.getType() == Cell.Type.WALL) {
+                    Image imgPared = new Image(
+                            getClass().getResourceAsStream("/com/jorge_hugo_javier/Vistas/Pared.jpg"));
+                    ImageView viewPared = new ImageView(imgPared);
+                    viewPared.setFitWidth(40);
+                    viewPared.setFitHeight(40);
+                    panel.getChildren().add(viewPared);
+                } else if (celda.getType() == Cell.Type.FLOOR) {
+                    Image imgSuelo = new Image(
+                            getClass().getResourceAsStream("/com/jorge_hugo_javier/Vistas/suelo.png"));
+                    ImageView viewSuelo = new ImageView(imgSuelo);
+                    viewSuelo.setFitWidth(40);
+                    viewSuelo.setFitHeight(40);
+                    panel.getChildren().add(viewSuelo);
 
-                        // Jugador
-                        if (fila == jugadorFila && col == jugadorCol) {
-                            Image imgJugador = new Image(
-                                    getClass().getResourceAsStream(
-                                            "/com/jorge_hugo_javier/Vistas/jugador.png"));
-                            ImageView viewJugador = new ImageView(imgJugador);
-                            viewJugador.setFitWidth(35); // Un poco más pequeño que la celda
-                            viewJugador.setFitHeight(35);
-                            panel.getChildren().add(viewJugador);
-                        }
-                        break;
-                    default: // Error visual
-                        panel.setStyle("-fx-background-color: red;");
+                    if (fila == jugadorFila && col == jugadorCol) {
+                        Image imgJugador = new Image(
+                                getClass().getResourceAsStream("/com/jorge_hugo_javier/Vistas/jugador.png"));
+                        ImageView viewJugador = new ImageView(imgJugador);
+                        viewJugador.setFitWidth(35);
+                        viewJugador.setFitHeight(35);
+                        panel.getChildren().add(viewJugador);
+                    }
+                } else {
+                    panel.setStyle("-fx-background-color: red;");
                 }
 
-                gridMapa.add(panel, col, fila); // ¡Ojo!: (columna, fila)
+                gridMapa.add(panel, col, fila);
             }
         }
     }
@@ -177,9 +172,11 @@ public class ControladorPrincipal {
      * Buscar hueco libre en el mapa para colocar al jugador
      */
     private void buscarPosicionInicialJugador() {
-        for (int fila = 0; fila < mapa.length; fila++) {
-            for (int col = 0; col < mapa[fila].length; col++) {
-                if (mapa[fila][col] == '.') {
+        Cell[][] grid = mapa.getGrid();
+
+        for (int fila = 0; fila < grid.length; fila++) {
+            for (int col = 0; col < grid[fila].length; col++) {
+                if (grid[fila][col].getType() == Cell.Type.FLOOR) {
                     jugadorFila = fila;
                     jugadorCol = col;
                     return;
@@ -187,4 +184,5 @@ public class ControladorPrincipal {
             }
         }
     }
+
 }

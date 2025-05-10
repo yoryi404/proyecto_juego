@@ -27,10 +27,7 @@ public class ControladorDeJuego {
      */
     public void setMapa(JuegoMap mapa) {
         this.mapa = mapa;
-
-        // Establecer los límites del mapa en el jugador
-        jugador.setLimitesMapa(mapa.getAncho(), mapa.getAlto());
-
+        jugador.setLimites(mapa.getGrid()[0].length, mapa.getGrid().length);
         actualizarVista();
     }
 
@@ -39,18 +36,28 @@ public class ControladorDeJuego {
      */
     public void manejarTeclado(KeyEvent evento) {
         switch (evento.getCode()) {
-            case W -> jugador.moverArriba();
-            case S -> jugador.moverAbajo();
-            case A -> jugador.moverIzquierda();
-            case D -> jugador.moverDerecha();
+            case W:
+                jugador.moverArriba();
+                break;
+            case S:
+                jugador.moverAbajo();
+                break;
+            case A:
+                jugador.moverIzquierda();
+                break;
+            case D:
+                jugador.moverDerecha();
+                break;
+            default:
+                break;
         }
-
         actualizarVista();
-        moverEnemigos(); // Los enemigos reaccionan después del movimiento del jugador
+        moverEnemigos();
     }
 
     /**
-     * Imprime la posición del jugador (puedes mejorar esto con dibujo en el GridPane)
+     * Imprime la posición del jugador (puedes mejorar esto con dibujo en el
+     * GridPane)
      */
     private void actualizarVista() {
         System.out.println("Jugador en: " + jugador.getPosX() + "," + jugador.getPosY());
@@ -62,7 +69,6 @@ public class ControladorDeJuego {
     private void moverEnemigos() {
         for (Enemigo e : mapa.getEnemigos()) {
             e.moverHacia(jugador.getPosX(), jugador.getPosY());
-            System.out.println("Enemigo " + e.getNombre() + " se mueve a (" + e.getX() + "," + e.getY() + ")");
         }
     }
 }

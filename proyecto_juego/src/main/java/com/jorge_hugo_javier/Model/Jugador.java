@@ -8,11 +8,8 @@ public class Jugador {
     private int defensa;
     private int velocidad;
 
-    // Posición en el mapa
     private int posX;
     private int posY;
-
-    // Límites del mapa (deben definirse al iniciar el juego)
     private int limiteX;
     private int limiteY;
 
@@ -22,40 +19,35 @@ public class Jugador {
         this.fuerza = fuerza;
         this.defensa = defensa;
         this.velocidad = velocidad;
-
-        // Posición inicial
         this.posX = 0;
         this.posY = 0;
-
-        // Límites por defecto, deben ajustarse luego
-        this.limiteX = 10;
-        this.limiteY = 10;
     }
 
-    // Métodos para mover al jugador
     public void moverArriba() {
-        if (posY > 0) posY--;
+        if (posY > 0)
+            posY--;
     }
 
     public void moverAbajo() {
-        if (posY < limiteY - 1) posY++;
+        if (posY < limiteY - 1)
+            posY++;
     }
 
     public void moverIzquierda() {
-        if (posX > 0) posX--;
+        if (posX > 0)
+            posX--;
     }
 
     public void moverDerecha() {
-        if (posX < limiteX - 1) posX++;
+        if (posX < limiteX - 1)
+            posX++;
     }
 
-    // Método para definir los límites del mapa
-    public void setLimitesMapa(int limiteX, int limiteY) {
-        this.limiteX = limiteX;
-        this.limiteY = limiteY;
+    public void setLimites(int maxX, int maxY) {
+        this.limiteX = maxX;
+        this.limiteY = maxY;
     }
 
-    // Getters y setters de posición
     public int getPosX() {
         return posX;
     }
@@ -69,7 +61,6 @@ public class Jugador {
         this.posY = y;
     }
 
-    // Getters y setters del personaje
     public String getNombre() {
         return nombre;
     }
