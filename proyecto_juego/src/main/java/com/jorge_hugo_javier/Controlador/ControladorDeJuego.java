@@ -20,6 +20,9 @@ import javafx.application.Platform;
 import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
 import java.io.*;
+import java.io.BufferedWriter;
+import java.io.FileWriter;
+import java.io.IOException;
 
 public class ControladorDeJuego {
 
@@ -55,6 +58,10 @@ public class ControladorDeJuego {
      * Manejo de teclado: W A S D para moverse, SPACE para atacar
      */
     public void manejarTeclado(KeyEvent evento) {
+        if (jugador.isDead()) {
+        return; // Ya está muerto, no puede moverse ni atacar
+    }
+
     switch (evento.getCode()) {
         case W:
             jugador.moverArriba(mapa);
@@ -82,6 +89,39 @@ public class ControladorDeJuego {
     }
 
     moverEnemigos();
+    if (jugador.isDead()) {
+        System.out.println("☠ El jugador ha muerto.");
+        guardarEstadisticasYMostrarPantallaDerrota();
+    }
+    }
+
+    private void guardarEstadisticasYMostrarPantallaDerrota() {
+    // Guardar estadísticas
+    String ruta = "src/main/resources/com/jorge_hugo_javier/Estadisticas/estadisticas.txt";
+    try (BufferedWriter writer = new BufferedWriter(new FileWriter(ruta, true))) {
+        writer.write("Jugador: " + jugador.getNombre() +
+                     " | Vida: " + jugador.getHealth() +
+                     " | Fuerza: " + jugador.getAttack() +
+                     " | Defensa: " + jugador.getDefensa() +
+                     " | Velocidad: " + jugador.getVelocidad());
+        writer.newLine();
+    } catch (IOException e) {
+        System.err.println("❌ Error al guardar estadísticas: " + e.getMessage());
+    }
+    
+
+    // Cambiar de escena
+    Platform.runLater(() -> {
+        try {
+            FXMLLoader loader = new FXMLLoader(getClass().getResource("/com/jorge_hugo_javier/Vistas/Derrota.fxml"));
+            Parent root = loader.load();
+            Stage stage = (Stage) gridPane.getScene().getWindow();
+            stage.setScene(new Scene(root));
+            stage.show();
+        } catch (IOException e) {
+            System.err.println("❌ Error al cargar la pantalla de derrota: " + e.getMessage());
+        }
+    });
     }
 
     private void mostrarGameOver() {
@@ -151,7 +191,7 @@ public class ControladorDeJuego {
         // Salir o volver al menú (aquí puedes personalizar)
         Platform.exit();
     });
-}
+    }
 
     /**
      * Lógica de ataque del jugador al enemigo

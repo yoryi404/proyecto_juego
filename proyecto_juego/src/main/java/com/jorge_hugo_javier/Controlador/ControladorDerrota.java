@@ -8,6 +8,7 @@ import javafx.scene.control.TextArea;
 import javafx.stage.Stage;
 
 import java.io.IOException;
+import java.nio.charset.StandardCharsets;
 import java.nio.file.Files;
 import java.nio.file.Paths;
 import java.util.List;
@@ -19,11 +20,10 @@ public class ControladorDerrota {
 
     @FXML
     public void initialize() {
-        // Ruta donde se guardan las estadísticas
         String ruta = "src/main/resources/com/jorge_hugo_javier/Estadisticas/estadisticas.txt";
 
         try {
-            List<String> lineas = Files.readAllLines(Paths.get(ruta));
+            List<String> lineas = Files.readAllLines(Paths.get(ruta), StandardCharsets.UTF_8);
 
             if (lineas.isEmpty()) {
                 textAreaEstadisticas.setText("No hay estadísticas guardadas aún.");
@@ -49,10 +49,12 @@ public class ControladorDerrota {
 
             Stage stage = (Stage) textAreaEstadisticas.getScene().getWindow();
             stage.setScene(new Scene(root));
+            stage.centerOnScreen(); // Centra la nueva ventana
             stage.show();
 
         } catch (IOException e) {
             System.err.println("❌ Error al volver a la creación del personaje: " + e.getMessage());
+            e.printStackTrace();
         }
     }
 }
