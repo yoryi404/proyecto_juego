@@ -14,31 +14,30 @@ public class Jugador extends JuegoCharacter {
         this.velocidad = velocidad;
     }
 
+    // Métodos de movimiento
     public void moverArriba() {
-        if (y > 0)
-            y--;
+        if (y > 0) y--;
     }
 
     public void moverAbajo() {
-        if (y < limiteY - 1)
-            y++;
+        if (y < limiteY - 1) y++;
     }
 
     public void moverIzquierda() {
-        if (x > 0)
-            x--;
+        if (x > 0) x--;
     }
 
     public void moverDerecha() {
-        if (x < limiteX - 1)
-            x++;
+        if (x < limiteX - 1) x++;
     }
 
+    // Establecer límites del mapa
     public void setLimites(int maxX, int maxY) {
         this.limiteX = maxX;
         this.limiteY = maxY;
     }
 
+    // Setters
     public void setDefensa(int defensa) {
         this.defensa = defensa;
     }
@@ -47,6 +46,7 @@ public class Jugador extends JuegoCharacter {
         this.velocidad = velocidad;
     }
 
+    // Getters
     public int getDefensa() {
         return defensa;
     }
@@ -60,7 +60,19 @@ public class Jugador extends JuegoCharacter {
         this.y = y;
     }
 
-    // Ya tienes: getX(), getY(), getAttack(), getHealth() heredados
+    // Añadido para evitar errores al llamar getNombre() en ControladorDeJuego
+    public String getNombre() {
+        return name;
+    }
+
+    public String getFuerza() {
+        return String.valueOf(attack);
+    }
+
+    @Override
+    public void takeTurn(JuegoMap map, JuegoCharacter enemigo, JuegoCharacter jugador) {
+        // Este método se puede dejar sin implementar si no se usa para el jugador
+    }
 
     @Override
     public String toString() {
@@ -73,10 +85,5 @@ public class Jugador extends JuegoCharacter {
                 ", x=" + x +
                 ", y=" + y +
                 '}';
-    }
-
-    @Override
-    public void takeTurn(JuegoMap map, JuegoCharacter enemigo, JuegoCharacter jugador) {
-        // Se puede dejar vacío si no se usa
     }
 }

@@ -1,8 +1,8 @@
 <?xml version="1.0" encoding="UTF-8"?>
 
-<?import javafx.scene.layout.BorderPane?>
-<?import javafx.scene.layout.GridPane?>
-<?import javafx.scene.control.Label?>
+<?import javafx.scene.layout.*?>
+<?import javafx.scene.control.*?>
+<?import javafx.geometry.Insets?>
 
 <BorderPane xmlns="http://javafx.com/javafx/8" xmlns:fx="http://javafx.com/fxml/1"
             fx:controller="com.jorge_hugo_javier.Controlador.ControladorDeJuego">
@@ -14,5 +14,19 @@
     <bottom>
         <Label fx:id="labelVida" text="Vida: " BorderPane.alignment="CENTER" />
     </bottom>
+
+    <left>
+        <VBox spacing="10.0" alignment="TOP_LEFT" prefWidth="200" BorderPane.alignment="CENTER">
+            <padding>
+                <Insets top="20" left="10" right="10" bottom="10"/>
+            </padding>
+            <children>
+                <Label fx:id="labelNombre" text="Nombre: "/>
+                <Label fx:id="labelFuerza" text="Fuerza: "/>
+                <Label fx:id="labelDefensa" text="Defensa: "/>
+                <Label fx:id="labelVelocidad" text="Velocidad: "/>
+            </children>
+        </VBox>
+    </left>
 
 </BorderPane>

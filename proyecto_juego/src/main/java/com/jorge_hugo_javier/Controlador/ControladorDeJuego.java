@@ -20,6 +20,14 @@ public class ControladorDeJuego {
     @FXML
     private Label labelVida; // Label para mostrar la vida
 
+    @FXML private Label labelNombre;
+
+    @FXML private Label labelFuerza;
+
+    @FXML private Label labelDefensa;
+    
+    @FXML private Label labelVelocidad;
+
     private Jugador jugador;
     private JuegoMap mapa;
 
@@ -151,8 +159,10 @@ public class ControladorDeJuego {
         }
 
         // Actualizar la vida del jugador en pantalla
-        if (labelVida != null) {
-            labelVida.setText("Vida: " + jugador.getHealth());
-        }
+        if (labelVida != null) labelVida.setText("Vida: " + jugador.getHealth());
+        if (labelNombre != null) labelNombre.setText("Nombre: " + jugador.getNombre());
+        if (labelFuerza != null) labelFuerza.setText("Fuerza: " + jugador.getFuerza());
+        if (labelDefensa != null) labelDefensa.setText("Defensa: " + jugador.getDefensa());
+        if (labelVelocidad != null) labelVelocidad.setText("Velocidad: " + jugador.getVelocidad());
     }
 }
