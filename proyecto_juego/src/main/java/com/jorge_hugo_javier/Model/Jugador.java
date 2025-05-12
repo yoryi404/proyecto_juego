@@ -4,7 +4,6 @@ public class Jugador extends JuegoCharacter {
 
     private int defensa;
     private int velocidad;
-
     private int limiteX;
     private int limiteY;
 
@@ -14,30 +13,42 @@ public class Jugador extends JuegoCharacter {
         this.velocidad = velocidad;
     }
 
-    // Métodos de movimiento
-    public void moverArriba() {
-        if (y > 0) y--;
+    // --- MOVIMIENTO con validación de límites y paredes ---
+    public void moverArriba(JuegoMap mapa) {
+        int newY = y - 1;
+        if (mapa.isInsideBounds(x, newY) && mapa.getCell(x, newY).isWalkable()) {
+            y = newY;
+        }
     }
 
-    public void moverAbajo() {
-        if (y < limiteY - 1) y++;
+    public void moverAbajo(JuegoMap mapa) {
+        int newY = y + 1;
+        if (mapa.isInsideBounds(x, newY) && mapa.getCell(x, newY).isWalkable()) {
+            y = newY;
+        }
     }
 
-    public void moverIzquierda() {
-        if (x > 0) x--;
+    public void moverIzquierda(JuegoMap mapa) {
+        int newX = x - 1;
+        if (mapa.isInsideBounds(newX, y) && mapa.getCell(newX, y).isWalkable()) {
+            x = newX;
+        }
     }
 
-    public void moverDerecha() {
-        if (x < limiteX - 1) x++;
+    public void moverDerecha(JuegoMap mapa) {
+        int newX = x + 1;
+        if (mapa.isInsideBounds(newX, y) && mapa.getCell(newX, y).isWalkable()) {
+            x = newX;
+        }
     }
 
-    // Establecer límites del mapa
+    // --- Establecer límites del mapa ---
     public void setLimites(int maxX, int maxY) {
         this.limiteX = maxX;
         this.limiteY = maxY;
     }
 
-    // Setters
+    // --- Setters ---
     public void setDefensa(int defensa) {
         this.defensa = defensa;
     }
@@ -46,7 +57,12 @@ public class Jugador extends JuegoCharacter {
         this.velocidad = velocidad;
     }
 
-    // Getters
+    public void setPosicion(int x, int y) {
+        this.x = x;
+        this.y = y;
+    }
+
+    // --- Getters ---
     public int getDefensa() {
         return defensa;
     }
@@ -55,12 +71,6 @@ public class Jugador extends JuegoCharacter {
         return velocidad;
     }
 
-    public void setPosicion(int x, int y) {
-        this.x = x;
-        this.y = y;
-    }
-
-    // Añadido para evitar errores al llamar getNombre() en ControladorDeJuego
     public String getNombre() {
         return name;
     }
@@ -69,9 +79,10 @@ public class Jugador extends JuegoCharacter {
         return String.valueOf(attack);
     }
 
+    // --- Turno (sin usar en jugador) ---
     @Override
     public void takeTurn(JuegoMap map, JuegoCharacter enemigo, JuegoCharacter jugador) {
-        // Este método se puede dejar sin implementar si no se usa para el jugador
+        // No implementado para el jugador
     }
 
     @Override

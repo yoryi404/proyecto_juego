@@ -11,6 +11,8 @@ import javafx.scene.image.ImageView;
 import javafx.scene.input.KeyEvent;
 import javafx.scene.layout.GridPane;
 import javafx.scene.layout.StackPane;
+import javafx.scene.control.Alert;
+import javafx.application.Platform;
 
 public class ControladorDeJuego {
 
@@ -46,45 +48,77 @@ public class ControladorDeJuego {
      * Manejo de teclado: W A S D para moverse, SPACE para atacar
      */
     public void manejarTeclado(KeyEvent evento) {
-            switch (evento.getCode()) {
-    case W:
-        jugador.moverArriba();
-        break;
-    case S:
-        jugador.moverAbajo();
-        break;
-    case A:
-        jugador.moverIzquierda();
-        break;
-    case D:
-        jugador.moverDerecha();
-        break;
-    case SPACE:
-        atacarEnemigo();
-        break;
-    default:
-        break;
+    switch (evento.getCode()) {
+        case W:
+            jugador.moverArriba(mapa);
+            break;
+        case S:
+            jugador.moverAbajo(mapa);
+            break;
+        case A:
+            jugador.moverIzquierda(mapa);
+            break;
+        case D:
+            jugador.moverDerecha(mapa);
+            break;
+        case SPACE:
+            atacarEnemigo();
+            break;
+        default:
+            break;
     }
 
-        actualizarVista();
-        moverEnemigos();
+    actualizarVista();
+    // Mover enemigos después de que el jugador se mueva// Verificar si la vida del jugador llegó a 0
+    if (jugador.getHealth() <= 0) {
+        mostrarGameOver();
+    }
+
+    moverEnemigos();
+    }
+
+    private void mostrarGameOver() {
+        javafx.scene.control.Alert alerta = new javafx.scene.control.Alert(javafx.scene.control.Alert.AlertType.INFORMATION);
+        alerta.setTitle("Game Over");
+        alerta.setHeaderText(null);
+        alerta.setContentText("⚔ Se ha finalizado la partida. El jugador ha muerto.");
+        alerta.setOnHidden(e -> System.exit(0)); // Cierra la aplicación tras cerrar el diálogo
+        alerta.show();
     }
 
     /**
      * Lógica de movimiento de enemigos
      */
     private void moverEnemigos() {
-        for (Enemigo e : mapa.getEnemigos()) {
-            if (e.isDead()) continue;
+    for (Enemigo e : mapa.getEnemigos()) {
+        if (e.isDead()) continue;
 
-            if (estanAdyacentes(e, jugador)) {
-                jugador.receiveDamage(e.getAttack());
-                System.out.println(e.getName() + " ataca al jugador: -" + e.getAttack() + " vida.");
-            } else {
-                e.moverHacia(jugador.getX(), jugador.getY());
+        if (estanAdyacentes(e, jugador)) {
+            jugador.receiveDamage(e.getAttack());
+            System.out.println(e.getName() + " ataca al jugador: -" + e.getAttack() + " vida.");
+
+            if (jugador.isDead()) {
+                mostrarFinPartida("Has sido derrotado por " + e.getName() + "...");
+                return;
             }
+        } else {
+            e.moverHacia(jugador.getX(), jugador.getY());
         }
     }
+    }
+
+    private void mostrarFinPartida(String mensaje) {
+    Platform.runLater(() -> {
+        Alert alerta = new Alert(Alert.AlertType.INFORMATION);
+        alerta.setTitle("Fin del Juego");
+        alerta.setHeaderText(null);
+        alerta.setContentText("⚔ " + mensaje + "\n\n¡La partida ha terminado!");
+        alerta.showAndWait();
+
+        // Salir o volver al menú (aquí puedes personalizar)
+        Platform.exit();
+    });
+}
 
     /**
      * Lógica de ataque del jugador al enemigo
