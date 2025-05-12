@@ -1,14 +1,25 @@
 <?xml version="1.0" encoding="UTF-8"?>
 
+<?import javafx.scene.layout.VBox?>
 <?import javafx.scene.control.Button?>
 <?import javafx.scene.control.Label?>
-<?import javafx.scene.layout.VBox?>
+<?import javafx.scene.control.TextArea?>
+<?import javafx.geometry.Insets?>
 
-<VBox alignment="CENTER" spacing="20.0"
-      xmlns="http://javafx.com/javafx/8"
-      xmlns:fx="http://javafx.com/fxml/1"
-      fx:controller="com.jorge_hugo_javier.Controlador.ControladorDerrota">
+<VBox xmlns="http://javafx.com/javafx/8" xmlns:fx="http://javafx.com/fxml/1"
+      fx:controller="com.jorge_hugo_javier.Controlador.ControladorDerrota"
+      alignment="CENTER" spacing="20" style="-fx-padding: 40; -fx-background-color: #fff3f3;">
+    
+    <Label text="⚔ ¡Has sido derrotado! ⚔"
+           style="-fx-font-size: 26px; -fx-text-fill: #c62828; -fx-font-weight: bold;" />
 
-    <Label text="☠ Has sido derrotado ☠" style="-fx-font-size: 24px; -fx-text-fill: red;" />
-    <Button text="Volver a crear personaje" onAction="#volverACreacion" />
+    <TextArea fx:id="textAreaEstadisticas"
+              editable="false"
+              prefWidth="480" prefHeight="280"
+              wrapText="true"
+              style="-fx-font-size: 14px; -fx-control-inner-background: #fdf2f2; -fx-border-color: #b71c1c;" />
+
+    <Button text="🔁 Volver a crear personaje"
+            onAction="#volverACrearPersonaje"
+            style="-fx-font-size: 16px; -fx-background-color: #d32f2f; -fx-text-fill: white;" />
 </VBox>

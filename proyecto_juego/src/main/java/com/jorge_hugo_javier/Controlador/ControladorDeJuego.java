@@ -1,7 +1,5 @@
 package com.jorge_hugo_javier.Controlador;
 
-import java.io.IOException;
-
 import com.jorge_hugo_javier.Model.Enemigo;
 import com.jorge_hugo_javier.Model.JuegoCharacter;
 import com.jorge_hugo_javier.Model.JuegoMap;
@@ -19,6 +17,9 @@ import javafx.scene.Parent;
 import javafx.scene.Scene;
 import javafx.scene.control.Alert;
 import javafx.application.Platform;
+import java.time.LocalDateTime;
+import java.time.format.DateTimeFormatter;
+import java.io.*;
 
 public class ControladorDeJuego {
 
@@ -75,15 +76,17 @@ public class ControladorDeJuego {
     }
 
     actualizarVista();
-    // Mover enemigos después de que el jugador se mueva// Verificar si la vida del jugador llegó a 0
     if (jugador.getHealth() <= 0) {
-        mostrarGameOver();
+        guardarEstadisticasJugador(jugador); // ← guardar antes de salir
+        irAPantallaDerrota();                // ← cargar la pantalla de derrota
     }
 
     moverEnemigos();
     }
 
     private void mostrarGameOver() {
+    guardarEstadisticas();
+
     try {
         FXMLLoader loader = new FXMLLoader(getClass().getResource("/com/jorge_hugo_javier/Vistas/Derrota.fxml"));
         Parent root = loader.load();
@@ -92,6 +95,27 @@ public class ControladorDeJuego {
         stage.show();
     } catch (IOException e) {
         e.printStackTrace();
+    }
+    }
+
+    private void guardarEstadisticas() {
+    String ruta = "src/main/resources/com/jorge_hugo_javier/Estadisticas/estadisticas.txt";
+    String datos = String.format(
+        "Jugador: %s | Vida final: %d | Fuerza: %d | Defensa: %d | Velocidad: %d\n",
+        jugador.getNombre(), jugador.getHealth(), jugador.getAttack(), jugador.getDefensa(), jugador.getVelocidad()
+    );
+
+    try {
+        java.nio.file.Files.createDirectories(java.nio.file.Paths.get("src/main/resources/com/jorge_hugo_javier/Estadisticas"));
+        java.nio.file.Files.write(
+            java.nio.file.Paths.get(ruta),
+            datos.getBytes(),
+            java.nio.file.StandardOpenOption.CREATE,
+            java.nio.file.StandardOpenOption.APPEND
+        );
+        System.out.println("[✔] Estadísticas guardadas en: " + ruta);
+    } catch (IOException e) {
+        System.err.println("Error al guardar estadísticas: " + e.getMessage());
     }
     }
 
@@ -208,4 +232,45 @@ public class ControladorDeJuego {
         if (labelDefensa != null) labelDefensa.setText("Defensa: " + jugador.getDefensa());
         if (labelVelocidad != null) labelVelocidad.setText("Velocidad: " + jugador.getVelocidad());
     }
+
+    private void irAPantallaDerrota() {
+    try {
+        javafx.fxml.FXMLLoader loader = new javafx.fxml.FXMLLoader(getClass().getResource("/com/jorge_hugo_javier/Vistas/Derrota.fxml"));
+        javafx.scene.Parent root = loader.load();
+        javafx.scene.Scene scene = new javafx.scene.Scene(root);
+
+        // Obtener el Stage desde cualquier nodo (por ejemplo el gridPane)
+        javafx.stage.Stage stage = (javafx.stage.Stage) gridPane.getScene().getWindow();
+        stage.setScene(scene);
+        stage.show();
+    } catch (IOException e) {
+        System.err.println("❌ Error al cargar la pantalla de derrota: " + e.getMessage());
+    }
+    }
+
+    private void guardarEstadisticasJugador(Jugador jugador) {
+    try {
+        String ruta = "src/main/resources/com/jorge_hugo_javier/Estadisticas/estadisticas.txt";
+        BufferedWriter writer = new BufferedWriter(new FileWriter(ruta, true));
+
+        LocalDateTime ahora = LocalDateTime.now();
+        DateTimeFormatter formato = DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss");
+
+        writer.write("🕒 " + ahora.format(formato));
+        writer.newLine();
+        writer.write("→ Nombre: " + jugador.getNombre());
+        writer.newLine();
+        writer.write("→ Vida restante: " + jugador.getHealth());
+        writer.newLine();
+        writer.write("→ Fuerza: " + jugador.getAttack() + ", Defensa: " + jugador.getDefensa() + ", Velocidad: " + jugador.getVelocidad());
+        writer.newLine();
+        writer.write("-----------------------------------------");
+        writer.newLine();
+
+        writer.close();
+        System.out.println("[✔] Estadísticas guardadas correctamente.");
+    } catch (IOException e) {
+        System.err.println("❌ Error al guardar estadísticas: " + e.getMessage());
+    }
+}
 }

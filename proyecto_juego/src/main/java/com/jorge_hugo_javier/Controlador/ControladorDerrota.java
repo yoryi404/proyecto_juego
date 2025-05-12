@@ -4,21 +4,55 @@ import javafx.fxml.FXML;
 import javafx.fxml.FXMLLoader;
 import javafx.scene.Parent;
 import javafx.scene.Scene;
+import javafx.scene.control.TextArea;
 import javafx.stage.Stage;
+
+import java.io.IOException;
+import java.nio.file.Files;
+import java.nio.file.Paths;
+import java.util.List;
 
 public class ControladorDerrota {
 
     @FXML
-    private void volverACreacion() {
+    private TextArea textAreaEstadisticas;
+
+    @FXML
+    public void initialize() {
+        // Ruta donde se guardan las estadísticas
+        String ruta = "src/main/resources/com/jorge_hugo_javier/Estadisticas/estadisticas.txt";
+
+        try {
+            List<String> lineas = Files.readAllLines(Paths.get(ruta));
+
+            if (lineas.isEmpty()) {
+                textAreaEstadisticas.setText("No hay estadísticas guardadas aún.");
+            } else {
+                StringBuilder contenido = new StringBuilder("📊 Estadísticas del jugador:\n\n");
+                for (String linea : lineas) {
+                    contenido.append("• ").append(linea).append("\n");
+                }
+                textAreaEstadisticas.setText(contenido.toString());
+            }
+
+        } catch (IOException e) {
+            textAreaEstadisticas.setText("❌ Error al leer el archivo de estadísticas.");
+            System.err.println("❌ Error leyendo estadísticas: " + e.getMessage());
+        }
+    }
+
+    @FXML
+    private void volverACrearPersonaje() {
         try {
             FXMLLoader loader = new FXMLLoader(getClass().getResource("/com/jorge_hugo_javier/Vistas/CreacionPersonaje.fxml"));
             Parent root = loader.load();
 
-            Stage stage = (Stage) ((javafx.scene.Node) (loader.getRoot())).getScene().getWindow();
+            Stage stage = (Stage) textAreaEstadisticas.getScene().getWindow();
             stage.setScene(new Scene(root));
             stage.show();
-        } catch (Exception e) {
-            e.printStackTrace();
+
+        } catch (IOException e) {
+            System.err.println("❌ Error al volver a la creación del personaje: " + e.getMessage());
         }
     }
 }
