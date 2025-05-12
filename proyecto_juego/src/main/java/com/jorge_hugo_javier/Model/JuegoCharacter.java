@@ -41,6 +41,7 @@ public abstract class JuegoCharacter {
 
     public abstract void takeTurn(JuegoMap map, JuegoCharacter enemigo, JuegoCharacter jugador);
 
+    // Getters
     public int getX() {
         return x;
     }
@@ -59,5 +60,14 @@ public abstract class JuegoCharacter {
 
     public String getName() {
         return name;
+    }
+
+    // Setters
+    public void setX(int x) {
+        this.x = x;
+    }
+
+    public void setY(int y) {
+        this.y = y;
     }
 }

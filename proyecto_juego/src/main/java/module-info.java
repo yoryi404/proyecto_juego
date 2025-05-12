@@ -1,6 +1,7 @@
 module com.jorge_hugo_javier {
     requires javafx.controls;
     requires javafx.fxml;
+    requires transitive javafx.graphics;
 
     opens com.jorge_hugo_javier.Controlador to javafx.fxml;
     opens com.jorge_hugo_javier.Model to javafx.fxml;

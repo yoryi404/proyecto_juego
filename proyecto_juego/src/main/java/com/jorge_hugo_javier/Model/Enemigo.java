@@ -37,16 +37,6 @@ public class Enemigo extends JuegoCharacter {
             this.setY(y);
         }
 
-        private void setY(int y) {
-            
-            throw new UnsupportedOperationException("Unimplemented method 'setY'");
-        }
-
-        private void setX(int x) {
-            
-            throw new UnsupportedOperationException("Unimplemented method 'setX'");
-        }
-
         public String getNombre() {
            
             throw new UnsupportedOperationException("Unimplemented method 'getNombre'");

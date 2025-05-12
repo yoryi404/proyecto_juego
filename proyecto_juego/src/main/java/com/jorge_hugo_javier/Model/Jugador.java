@@ -1,96 +1,42 @@
 package com.jorge_hugo_javier.Model;
 
-public class Jugador {
+public class Jugador extends JuegoCharacter {
 
-    private String nombre;
-    private int salud;
-    private int fuerza;
     private int defensa;
     private int velocidad;
 
-    private int posX;
-    private int posY;
     private int limiteX;
     private int limiteY;
 
     public Jugador(String nombre, int salud, int fuerza, int defensa, int velocidad) {
-        this.nombre = nombre;
-        this.salud = salud;
-        this.fuerza = fuerza;
+        super(nombre, salud, fuerza, 0, 0); // x = 0, y = 0
         this.defensa = defensa;
         this.velocidad = velocidad;
-        this.posX = 0;
-        this.posY = 0;
     }
 
     public void moverArriba() {
-        if (posY > 0)
-            posY--;
+        if (y > 0)
+            y--;
     }
 
     public void moverAbajo() {
-        if (posY < limiteY - 1)
-            posY++;
+        if (y < limiteY - 1)
+            y++;
     }
 
     public void moverIzquierda() {
-        if (posX > 0)
-            posX--;
+        if (x > 0)
+            x--;
     }
 
     public void moverDerecha() {
-        if (posX < limiteX - 1)
-            posX++;
+        if (x < limiteX - 1)
+            x++;
     }
 
     public void setLimites(int maxX, int maxY) {
         this.limiteX = maxX;
         this.limiteY = maxY;
-    }
-
-    public int getPosX() {
-        return posX;
-    }
-
-    public int getPosY() {
-        return posY;
-    }
-
-    public void setPosicion(int x, int y) {
-        this.posX = x;
-        this.posY = y;
-    }
-
-    public String getNombre() {
-        return nombre;
-    }
-
-    public int getSalud() {
-        return salud;
-    }
-
-    public int getFuerza() {
-        return fuerza;
-    }
-
-    public int getDefensa() {
-        return defensa;
-    }
-
-    public int getVelocidad() {
-        return velocidad;
-    }
-
-    public void setNombre(String nombre) {
-        this.nombre = nombre;
-    }
-
-    public void setSalud(int salud) {
-        this.salud = salud;
-    }
-
-    public void setFuerza(int fuerza) {
-        this.fuerza = fuerza;
     }
 
     public void setDefensa(int defensa) {
@@ -101,16 +47,36 @@ public class Jugador {
         this.velocidad = velocidad;
     }
 
+    public int getDefensa() {
+        return defensa;
+    }
+
+    public int getVelocidad() {
+        return velocidad;
+    }
+
+    public void setPosicion(int x, int y) {
+        this.x = x;
+        this.y = y;
+    }
+
+    // Ya tienes: getX(), getY(), getAttack(), getHealth() heredados
+
     @Override
     public String toString() {
         return "Jugador{" +
-                "nombre='" + nombre + '\'' +
-                ", salud=" + salud +
-                ", fuerza=" + fuerza +
+                "nombre='" + name + '\'' +
+                ", salud=" + health +
+                ", fuerza=" + attack +
                 ", defensa=" + defensa +
                 ", velocidad=" + velocidad +
-                ", posX=" + posX +
-                ", posY=" + posY +
+                ", x=" + x +
+                ", y=" + y +
                 '}';
+    }
+
+    @Override
+    public void takeTurn(JuegoMap map, JuegoCharacter enemigo, JuegoCharacter jugador) {
+        // Se puede dejar vacío si no se usa
     }
 }

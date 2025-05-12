@@ -49,46 +49,37 @@ public class ControladorPrincipal {
     private int jugadorFila;
     private int jugadorCol;
 
-    // Método para recibir el jugador desde CreacionPersonaje
     public void setJugador(Jugador jugador) {
-        this.jugador = jugador;
-        actualizarEstadisticas();
+    this.jugador = jugador;
+    actualizarEstadisticas();
 
-        // Aquí añadimos carga y dibujo del mapa
-        cargarMapaDesdeFichero();
-        dibujarMapa();
-        buscarPosicionInicialJugador();
+    cargarMapaDesdeFichero();
+    buscarPosicionInicialJugador(); // <-- primero colócalo
+    dibujarMapa(); // <-- luego dibújalo
 
-        // Cargar la vista del juego y pasar datos al GameController
-        try {
-            FXMLLoader loader = new FXMLLoader(
-                    getClass().getResource("/com/jorge_hugo_javier/Vistas/Game.fxml"));
-            Parent root = loader.load();
-            ControladorDeJuego ControladorDeJuego = loader.getController();
-            ControladorDeJuego.setJugador(jugador);
-            ControladorDeJuego.setMapa(mapa);
+    try {
+        FXMLLoader loader = new FXMLLoader(getClass().getResource("/com/jorge_hugo_javier/Vistas/Game.fxml"));
+        Parent root = loader.load();
+        ControladorDeJuego controladorDeJuego = loader.getController();
+        controladorDeJuego.setJugador(jugador);
+        controladorDeJuego.setMapa(mapa);
 
-            // Opcional: cambiar la escena actual al nuevo layout
-            Stage stage = (Stage) gridMapa.getScene().getWindow();
-            stage.setScene(new Scene(root));
-            stage.show();
-        } catch (IOException e) {
-            e.printStackTrace();
-        }
-
+        Stage stage = (Stage) gridMapa.getScene().getWindow();
+        stage.setScene(new Scene(root));
+        stage.show();
+    } catch (IOException e) {
+        e.printStackTrace();
+    }
     }
 
     private void actualizarEstadisticas() {
-        nombreJugador.setText("Nombre: " + jugador.getNombre());
-        saludJugador.setText("Salud: " + jugador.getSalud());
-        fuerzaJugador.setText("Fuerza: " + jugador.getFuerza());
+        nombreJugador.setText("Nombre: " + jugador.getName());
+        saludJugador.setText("Salud: " + jugador.getHealth());
+        fuerzaJugador.setText("Fuerza: " + jugador.getAttack());
         defensaJugador.setText("Defensa: " + jugador.getDefensa());
         velocidadJugador.setText("Velocidad: " + jugador.getVelocidad());
     }
 
-    /**
-     * Cargar el mapa desde el archivo Nivel1.txt
-     */
     private void cargarMapaDesdeFichero() {
         try (BufferedReader br = new BufferedReader(
                 new InputStreamReader(getClass().getResourceAsStream("/com/jorge_hugo_javier/Mapa/Nivel1.txt")))) {
@@ -100,20 +91,14 @@ public class ControladorPrincipal {
             }
 
             mapa = new JuegoMap(lineas);
-            // Ahora que mapa existe, ya podemos añadir enemigos
-            Enemigo enemigo1 = new Enemigo("Goblin", 10, 2, 1, 1);
-            Enemigo enemigo2 = new Enemigo("Orco", 15, 3, 2, 1);
-            mapa.addEnemigo(enemigo1);
-            mapa.addEnemigo(enemigo2);
+            mapa.addEnemigo(new Enemigo("Goblin", 10, 2, 1, 1));
+            mapa.addEnemigo(new Enemigo("Orco", 15, 3, 2, 1));
 
         } catch (IOException e) {
             e.printStackTrace();
         }
     }
 
-    /**
-     * Pintar el mapa en el GridPane
-     */
     private void dibujarMapa() {
         gridMapa.getChildren().clear();
         gridMapa.getColumnConstraints().clear();
@@ -136,13 +121,12 @@ public class ControladorPrincipal {
         for (int fila = 0; fila < numFilas; fila++) {
             for (int col = 0; col < numCols; col++) {
                 Cell celda = grid[fila][col];
-
                 StackPane panel = new StackPane();
                 panel.setPrefSize(40, 40);
                 char simbolo = celda.getSimboloOriginal();
 
                 switch (simbolo) {
-                    case '#': // Pared
+                    case '#':
                         Image imgPared = new Image(getClass().getResourceAsStream(
                                 "/com/jorge_hugo_javier/Vistas/Pared.jpg"));
                         ImageView viewPared = new ImageView(imgPared);
@@ -151,7 +135,7 @@ public class ControladorPrincipal {
                         panel.getChildren().add(viewPared);
                         break;
 
-                    case '.': // Suelo
+                    case '.':
                         Image imgSuelo = new Image(getClass().getResourceAsStream(
                                 "/com/jorge_hugo_javier/Vistas/suelo.png"));
                         ImageView viewSuelo = new ImageView(imgSuelo);
@@ -159,8 +143,7 @@ public class ControladorPrincipal {
                         viewSuelo.setFitHeight(40);
                         panel.getChildren().add(viewSuelo);
 
-                        // Jugador
-                        if (fila == jugador.getPosY() && col == jugador.getPosX()) {
+                        if (fila == jugador.getY() && col == jugador.getX()) {
                             Image imgJugador = new Image(getClass().getResourceAsStream(
                                     "/com/jorge_hugo_javier/Vistas/jugador.png"));
                             ImageView viewJugador = new ImageView(imgJugador);
@@ -173,27 +156,27 @@ public class ControladorPrincipal {
                     default:
                         panel.setStyle("-fx-background-color: red;");
                 }
+
                 gridMapa.add(panel, col, fila);
             }
         }
     }
 
-    /**
-     * Buscar hueco libre en el mapa para colocar al jugador
-     */
     private void buscarPosicionInicialJugador() {
-        Cell[][] grid = mapa.getGrid();
+    Cell[][] grid = mapa.getGrid();
 
-        for (int fila = 0; fila < grid.length; fila++) {
-            for (int col = 0; col < grid[fila].length; col++) {
-                if (grid[fila][col].getType() == Cell.Type.FLOOR) {
-                    jugadorFila = fila;
-                    jugadorCol = col;
-                    jugador.setPosicion(col, fila); 
-                    return;
-                }
+    for (int fila = 0; fila < grid.length; fila++) {
+        for (int col = 0; col < grid[fila].length; col++) {
+            if (grid[fila][col].getType() == Cell.Type.FLOOR) {
+                jugadorFila = fila;
+                jugadorCol = col;
+                jugador.setPosicion(col, fila);
+
+                // DEBUG: Imprime la posición inicial del jugador
+                System.out.println("Jugador colocado en: X = " + col + ", Y = " + fila);
+                return;
             }
         }
     }
-
+    }
 }

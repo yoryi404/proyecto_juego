@@ -53,6 +53,10 @@
                <font>
                   <Font size="15.0" />
                </font></Label>
+            <Label fx:id="labelVida" prefHeight="30.0" prefWidth="183.0" text="Vida: 100">
+               <font>
+                  <Font size="15.0" />
+               </font></Label>
          </children>
       </VBox>
    </left>
