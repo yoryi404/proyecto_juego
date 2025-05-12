@@ -137,7 +137,7 @@ public class ControladorDeJuego {
                 // Dibujar jugador
                 if (jugador.getY() == fila && jugador.getX() == col) {
                     ImageView imgJugador = new ImageView(new Image(
-                            getClass().getResourceAsStream("/com/jorge_hugo_javier/Vistas/jugador.png")));
+                            getClass().getResourceAsStream("/com/jorge_hugo_javier/Vistas/Jugador.jpg")));
                     imgJugador.setFitWidth(35);
                     imgJugador.setFitHeight(35);
                     panel.getChildren().add(imgJugador);
