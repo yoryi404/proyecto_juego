@@ -1,0 +1,14 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import javafx.scene.control.Button?>
+<?import javafx.scene.control.Label?>
+<?import javafx.scene.layout.VBox?>
+
+<VBox alignment="CENTER" spacing="20.0"
+      xmlns="http://javafx.com/javafx/8"
+      xmlns:fx="http://javafx.com/fxml/1"
+      fx:controller="com.jorge_hugo_javier.Controlador.ControladorDerrota">
+
+    <Label text="☠ Has sido derrotado ☠" style="-fx-font-size: 24px; -fx-text-fill: red;" />
+    <Button text="Volver a crear personaje" onAction="#volverACreacion" />
+</VBox>

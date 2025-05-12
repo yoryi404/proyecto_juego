@@ -1,16 +1,22 @@
 package com.jorge_hugo_javier.Controlador;
 
+import java.io.IOException;
+
 import com.jorge_hugo_javier.Model.Enemigo;
 import com.jorge_hugo_javier.Model.JuegoCharacter;
 import com.jorge_hugo_javier.Model.JuegoMap;
 import com.jorge_hugo_javier.Model.Jugador;
 import javafx.fxml.FXML;
+import javafx.fxml.FXMLLoader;
 import javafx.scene.control.Label;
 import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
 import javafx.scene.input.KeyEvent;
 import javafx.scene.layout.GridPane;
 import javafx.scene.layout.StackPane;
+import javafx.stage.Stage;
+import javafx.scene.Parent;
+import javafx.scene.Scene;
 import javafx.scene.control.Alert;
 import javafx.application.Platform;
 
@@ -78,12 +84,15 @@ public class ControladorDeJuego {
     }
 
     private void mostrarGameOver() {
-        javafx.scene.control.Alert alerta = new javafx.scene.control.Alert(javafx.scene.control.Alert.AlertType.INFORMATION);
-        alerta.setTitle("Game Over");
-        alerta.setHeaderText(null);
-        alerta.setContentText("⚔ Se ha finalizado la partida. El jugador ha muerto.");
-        alerta.setOnHidden(e -> System.exit(0)); // Cierra la aplicación tras cerrar el diálogo
-        alerta.show();
+    try {
+        FXMLLoader loader = new FXMLLoader(getClass().getResource("/com/jorge_hugo_javier/Vistas/Derrota.fxml"));
+        Parent root = loader.load();
+        Stage stage = (Stage) gridPane.getScene().getWindow();
+        stage.setScene(new Scene(root));
+        stage.show();
+    } catch (IOException e) {
+        e.printStackTrace();
+    }
     }
 
     /**
