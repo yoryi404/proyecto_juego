@@ -8,10 +8,7 @@ import javafx.scene.control.Label;
 import javafx.scene.control.ListView;
 import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
-import javafx.scene.layout.ColumnConstraints;
-import javafx.scene.layout.GridPane;
-import javafx.scene.layout.RowConstraints;
-import javafx.scene.layout.StackPane;
+import javafx.scene.layout.*;
 import javafx.stage.Stage;
 
 import java.io.BufferedReader;
@@ -20,29 +17,18 @@ import java.io.InputStreamReader;
 import java.util.ArrayList;
 import java.util.List;
 
-import com.jorge_hugo_javier.Model.Cell;
-import com.jorge_hugo_javier.Model.Enemigo;
-import com.jorge_hugo_javier.Model.JuegoMap;
-import com.jorge_hugo_javier.Model.Jugador;
+import com.jorge_hugo_javier.Model.*;
 
 public class ControladorPrincipal {
 
-    @FXML
-    private GridPane gridMapa;
-    @FXML
-    private Label nombreJugador;
-    @FXML
-    private Label saludJugador;
-    @FXML
-    private Label fuerzaJugador;
-    @FXML
-    private Label defensaJugador;
-    @FXML
-    private Label velocidadJugador;
-    @FXML
-    private ListView<String> listaTurnos;
-    @FXML
-    private Label estadisticasJugador;
+    @FXML private GridPane gridMapa;
+    @FXML private Label nombreJugador;
+    @FXML private Label saludJugador;
+    @FXML private Label fuerzaJugador;
+    @FXML private Label defensaJugador;
+    @FXML private Label velocidadJugador;
+    @FXML private ListView<String> listaTurnos;
+    @FXML private Label estadisticasJugador;
 
     private Jugador jugador;
     protected JuegoMap mapa;
@@ -54,23 +40,33 @@ public class ControladorPrincipal {
     actualizarEstadisticas();
 
     cargarMapaDesdeFichero();
-    buscarPosicionInicialJugador(); // <-- primero colócalo
-    dibujarMapa(); // <-- luego dibújalo
+    buscarPosicionInicialJugador();
+    dibujarMapa();                  
 
     try {
         FXMLLoader loader = new FXMLLoader(getClass().getResource("/com/jorge_hugo_javier/Vistas/Game.fxml"));
         Parent root = loader.load();
+
+        // Obtenemos el controlador de la nueva vista
         ControladorDeJuego controladorDeJuego = loader.getController();
         controladorDeJuego.setJugador(jugador);
         controladorDeJuego.setMapa(mapa);
 
-        Stage stage = (Stage) gridMapa.getScene().getWindow();
-        stage.setScene(new Scene(root));
-        stage.show();
+        // Creamos y configuramos la nueva escena
+        Scene escenaJuego = new Scene(root);
+        escenaJuego.setOnKeyPressed(controladorDeJuego::manejarTeclado);
+
+        // ⚠️ Esperamos a que gridMapa tenga escena antes de hacer el cambio
+        javafx.application.Platform.runLater(() -> {
+            Stage stage = (Stage) gridMapa.getScene().getWindow();
+            stage.setScene(escenaJuego);
+            stage.show();
+        });
+
     } catch (IOException e) {
         e.printStackTrace();
     }
-    }
+}
 
     private void actualizarEstadisticas() {
         nombreJugador.setText("Nombre: " + jugador.getName());
@@ -94,7 +90,10 @@ public class ControladorPrincipal {
             mapa.addEnemigo(new Enemigo("Goblin", 10, 2, 1, 1));
             mapa.addEnemigo(new Enemigo("Orco", 15, 3, 2, 1));
 
+            System.out.println("🗺️ Mapa cargado correctamente con enemigos.");
+
         } catch (IOException e) {
+            System.err.println("❌ Error al leer el archivo Nivel1.txt");
             e.printStackTrace();
         }
     }
@@ -109,13 +108,10 @@ public class ControladorPrincipal {
         int numCols = grid[0].length;
 
         for (int i = 0; i < numCols; i++) {
-            ColumnConstraints colConst = new ColumnConstraints(40);
-            gridMapa.getColumnConstraints().add(colConst);
+            gridMapa.getColumnConstraints().add(new ColumnConstraints(40));
         }
-
         for (int i = 0; i < numFilas; i++) {
-            RowConstraints rowConst = new RowConstraints(40);
-            gridMapa.getRowConstraints().add(rowConst);
+            gridMapa.getRowConstraints().add(new RowConstraints(40));
         }
 
         for (int fila = 0; fila < numFilas; fila++) {
@@ -163,20 +159,18 @@ public class ControladorPrincipal {
     }
 
     private void buscarPosicionInicialJugador() {
-    Cell[][] grid = mapa.getGrid();
+        Cell[][] grid = mapa.getGrid();
 
-    for (int fila = 0; fila < grid.length; fila++) {
-        for (int col = 0; col < grid[fila].length; col++) {
-            if (grid[fila][col].getType() == Cell.Type.FLOOR) {
-                jugadorFila = fila;
-                jugadorCol = col;
-                jugador.setPosicion(col, fila);
-
-                // DEBUG: Imprime la posición inicial del jugador
-                System.out.println("Jugador colocado en: X = " + col + ", Y = " + fila);
-                return;
+        for (int fila = 0; fila < grid.length; fila++) {
+            for (int col = 0; col < grid[fila].length; col++) {
+                if (grid[fila][col].getType() == Cell.Type.FLOOR) {
+                    jugadorFila = fila;
+                    jugadorCol = col;
+                    jugador.setPosicion(col, fila);
+                    System.out.println("🧍 Jugador colocado en: X = " + col + ", Y = " + fila);
+                    return;
+                }
             }
         }
-    }
     }
 }
