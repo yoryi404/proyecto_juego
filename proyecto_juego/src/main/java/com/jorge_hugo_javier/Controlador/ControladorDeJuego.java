@@ -1,5 +1,6 @@
 package com.jorge_hugo_javier.Controlador;
 
+import com.jorge_hugo_javier.Model.Cell;
 import com.jorge_hugo_javier.Model.Enemigo;
 import com.jorge_hugo_javier.Model.JuegoCharacter;
 import com.jorge_hugo_javier.Model.JuegoMap;
@@ -19,10 +20,9 @@ import javafx.scene.control.Alert;
 import javafx.application.Platform;
 import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
+import java.util.ArrayList;
+import java.util.List;
 import java.io.*;
-import java.io.BufferedWriter;
-import java.io.FileWriter;
-import java.io.IOException;
 
 public class ControladorDeJuego {
 
@@ -30,7 +30,7 @@ public class ControladorDeJuego {
     private GridPane gridPane;
 
     @FXML
-    private Label labelVida; // Label para mostrar la vida
+    private Label labelVida;
 
     @FXML
     private Label labelNombre;
@@ -64,36 +64,56 @@ public class ControladorDeJuego {
      */
     public void manejarTeclado(KeyEvent evento) {
         if (jugador.isDead()) {
-            return; // Ya está muerto, no puede moverse ni atacar
+            return; // No puede moverse si está muerto
         }
+
+        int dx = 0, dy = 0;
 
         switch (evento.getCode()) {
             case W:
-                jugador.moverArriba(mapa);
+                dy = -1;
                 break;
             case S:
-                jugador.moverAbajo(mapa);
+                dy = 1;
                 break;
             case A:
-                jugador.moverIzquierda(mapa);
+                dx = -1;
                 break;
             case D:
-                jugador.moverDerecha(mapa);
-                break;
-            case SPACE:
-                atacarEnemigo();
+                dx = 1;
                 break;
             default:
-                break;
+                return; // Ignorar otras teclas // Ignorar otras teclas
+        }
+
+        int newX = jugador.getX() + dx;
+        int newY = jugador.getY() + dy;
+
+        if (mapa.isInsideBounds(newX, newY)) {
+            Cell celdaDestino = mapa.getCell(newX, newY);
+            JuegoCharacter objetivo = celdaDestino.getOccupant();
+
+            if (objetivo instanceof Enemigo && objetivo.isAlive()) {
+                Enemigo enemigo = (Enemigo) objetivo;
+                int daño = jugador.getAttack();
+                enemigo.receiveDamage(daño);
+                System.out.println("Atacaste a " + enemigo.getName() + ", vida restante: " + enemigo.getHealth());
+            } else if (celdaDestino.isWalkable()) {
+                jugador.setX(newX);
+                jugador.setY(newY);
+            }
         }
 
         actualizarVista();
+
         if (jugador.getHealth() <= 0) {
-            guardarEstadisticasJugador(jugador); // ← guardar antes de salir
-            irAPantallaDerrota(); // ← cargar la pantalla de derrota
+            guardarEstadisticasJugador(jugador);
+            irAPantallaDerrota();
+            return;
         }
 
         moverEnemigos();
+
         if (jugador.isDead()) {
             System.out.println("☠ El jugador ha muerto.");
             guardarEstadisticasYMostrarPantallaDerrota();
@@ -101,7 +121,7 @@ public class ControladorDeJuego {
     }
 
     private void guardarEstadisticasYMostrarPantallaDerrota() {
-        // Guardar estadísticas
+        // Guardar estadisticas
         String ruta = "src/main/resources/com/jorge_hugo_javier/Estadisticas/estadisticas.txt";
         try (BufferedWriter writer = new BufferedWriter(new FileWriter(ruta, true))) {
             writer.write("Jugador: " + jugador.getNombre() +
@@ -111,7 +131,7 @@ public class ControladorDeJuego {
                     " | Velocidad: " + jugador.getVelocidad());
             writer.newLine();
         } catch (IOException e) {
-            System.err.println("❌ Error al guardar estadísticas: " + e.getMessage());
+            System.err.println("Error al guardar estadísticas: " + e.getMessage());
         }
 
         // Cambiar de escena
@@ -184,6 +204,10 @@ public class ControladorDeJuego {
                 e.moverHacia(jugador.getX(), jugador.getY(), mapa);
             }
         }
+        boolean todosMuertos = mapa.getEnemigos().stream().allMatch(Enemigo::isDead);
+        if (todosMuertos) {
+            mostrarPantallaVictoria();
+        }
     }
 
     private void mostrarFinPartida(String mensaje) {
@@ -211,18 +235,71 @@ public class ControladorDeJuego {
                 if (enemigo.isDead()) {
                     System.out.println(enemigo.getName() + " ha sido derrotado.");
                     mapa.getCell(enemigo.getX(), enemigo.getY()).setOccupant(null);
+                    verificarVictoria();
                 }
             }
         }
     }
 
     /**
-     * Verifica si dos personajes están en celdas adyacentes
+     * 
+     * @param a
+     * @param b
+     * @return
      */
     private boolean estanAdyacentes(JuegoCharacter a, JuegoCharacter b) {
         int dx = Math.abs(a.getX() - b.getX());
         int dy = Math.abs(a.getY() - b.getY());
-        return (dx + dy == 1); // celdas ortogonales
+        return (dx + dy == 1);
+    }
+
+    private void cargarNuevoNivel(String rutaArchivo) {
+        try (BufferedReader br = new BufferedReader(
+                new InputStreamReader(getClass().getResourceAsStream(rutaArchivo)))) {
+            List<String> lineas = new ArrayList<>();
+            String linea;
+            while ((linea = br.readLine()) != null) {
+                lineas.add(linea);
+            }
+
+            mapa = new JuegoMap(lineas);
+            mapa.addEnemigo(new Enemigo("Orco Jefe", 20, 5, 5, 5));
+
+            jugador.setPosicion(0, 0);
+            jugador.setLimites(mapa.getGrid()[0].length, mapa.getGrid().length);
+
+            actualizarVista();
+
+        } catch (IOException e) {
+            System.err.println("Error al cargar el nuevo nivel");
+            e.printStackTrace();
+        }
+    }
+
+    private void verificarVictoria() {
+        boolean todosMuertos = mapa.getEnemigos().stream().allMatch(e -> !e.isAlive());
+
+        if (todosMuertos) {
+            System.out.println("🎉 ¡Has derrotado a todos los enemigos!");
+
+            mostrarPantallaVictoria();
+
+            cargarNuevoNivel("/com/jorge_hugo_javier/Mapa/Nivel2.txt");
+        }
+    }
+
+    private void mostrarPantallaVictoria() {
+        try {
+            FXMLLoader loader = new FXMLLoader(getClass().getResource("/com/jorge_hugo_javier/Vistas/Victoria.fxml"));
+            Parent root = loader.load();
+
+            Stage stage = (Stage) gridPane.getScene().getWindow();
+            stage.setScene(new Scene(root));
+            stage.setTitle("¡Victoria!");
+            stage.show();
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
     }
 
     /**

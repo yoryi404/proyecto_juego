@@ -1,0 +1,27 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import javafx.scene.control.Button?>
+<?import javafx.scene.control.Label?>
+<?import javafx.scene.image.ImageView?>
+<?import javafx.scene.layout.VBox?>
+<?import javafx.scene.text.Font?>
+
+<VBox xmlns="http://javafx.com/javafx/8" xmlns:fx="http://javafx.com/fxml/1"
+      fx:controller="com.jorge_hugo_javier.Controlador.ControladorVictoria"
+      spacing="20" alignment="CENTER"
+      style="-fx-background-color: linear-gradient(to bottom, #101010, #202020); -fx-padding: 40;">
+    
+    <ImageView fx:id="victoriaImage" fitHeight="250" fitWidth="400" pickOnBounds="true" preserveRatio="true"
+               image="@/com/jorge_hugo_javier/Vistas/victoria.png"/>
+
+    <Label text="¡Has ganado la partida!" textFill="#00FF00">
+        <font>
+            <Font name="Arial Bold" size="28.0" />
+        </font>
+    </Label>
+
+    <Button fx:id="btnReiniciar" text="Jugar de nuevo" onAction="#reiniciarJuego"
+            style="-fx-background-color: #00aa00; -fx-text-fill: white;" />
+    <Button fx:id="btnSalir" text="Salir del juego" onAction="#salirJuego"
+            style="-fx-background-color: #aa0000; -fx-text-fill: white;" />
+</VBox>
