@@ -12,6 +12,7 @@ import javafx.scene.Parent;
 import javafx.scene.Scene;
 import javafx.scene.control.Alert;
 import javafx.scene.control.Label;
+import javafx.scene.control.ProgressBar;
 import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
 import javafx.scene.input.KeyEvent;
@@ -20,6 +21,7 @@ import javafx.scene.layout.StackPane;
 import javafx.stage.Stage;
 
 import java.io.*;
+import javafx.scene.control.ProgressBar;
 import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
 import java.util.ArrayList;
@@ -27,15 +29,27 @@ import java.util.List;
 
 public class ControladorDeJuego {
 
-    @FXML private GridPane gridPane;
-    @FXML private Label labelVida;
-    @FXML private Label labelNombre;
-    @FXML private Label labelFuerza;
-    @FXML private Label labelDefensa;
-    @FXML private Label labelVelocidad;
-    @FXML private Label labelNombreEnemigo;
-    @FXML private Label labelVidaEnemigo;
-    @FXML private Label labelFuerzaEnemigo;
+    @FXML
+    private GridPane gridPane;
+
+    @FXML
+    private Label labelVida;
+
+    @FXML
+    private Label labelNombre;
+
+    @FXML
+    private Label labelFuerza;
+
+    @FXML
+    private Label labelDefensa;
+
+    @FXML
+    private Label labelVelocidad;
+
+    @FXML private ProgressBar vidaJugadorBarra; // AÑADIDO
+    
+    @FXML private ProgressBar vidaEnemigoBarra; // AÑADIDO
 
     private Jugador jugador;
     private JuegoMap mapa;
@@ -153,49 +167,45 @@ public class ControladorDeJuego {
             }
         }
 
-        if (labelVida != null) labelVida.setText("Vida: " + jugador.getHealth());
-        if (labelNombre != null) labelNombre.setText("Nombre: " + jugador.getNombre());
-        if (labelFuerza != null) labelFuerza.setText("Fuerza: " + jugador.getFuerza());
-        if (labelDefensa != null) labelDefensa.setText("Defensa: " + jugador.getDefensa());
-        if (labelVelocidad != null) labelVelocidad.setText("Velocidad: " + jugador.getVelocidad());
+        // Actualizar la vida del jugador en pantalla
+        if (labelVida != null)
+            labelVida.setText("Vida: " + jugador.getHealth());
+        if (labelNombre != null)
+            labelNombre.setText("Nombre: " + jugador.getNombre());
+        if (labelFuerza != null)
+            labelFuerza.setText("Fuerza: " + jugador.getFuerza());
+        if (labelDefensa != null)
+            labelDefensa.setText("Defensa: " + jugador.getDefensa());
+        if (labelVelocidad != null)
+            labelVelocidad.setText("Velocidad: " + jugador.getVelocidad());
 
-        Enemigo enemigoCercano = mapa.getEnemigos().stream()
-            .filter(e -> !e.isDead() && estanAdyacentes(jugador, e))
-            .findFirst().orElse(null);
+        // ACTUALIZAR BARRAS DE VIDA
+        if (vidaJugadorBarra != null) {
+            double progresoJugador = Math.max(0.0, Math.min(1.0, jugador.getHealth() / 100.0));
+            vidaJugadorBarra.setProgress(progresoJugador);
+        }
 
-        if (enemigoCercano != null) {
-            if (labelNombreEnemigo != null) labelNombreEnemigo.setText("Enemigo: " + enemigoCercano.getName());
-            if (labelVidaEnemigo != null) labelVidaEnemigo.setText("Vida: " + enemigoCercano.getHealth());
-            if (labelFuerzaEnemigo != null) labelFuerzaEnemigo.setText("Fuerza: " + enemigoCercano.getAttack());
-        } else {
-            if (labelNombreEnemigo != null) labelNombreEnemigo.setText("Enemigo: -");
-            if (labelVidaEnemigo != null) labelVidaEnemigo.setText("Vida: -");
-            if (labelFuerzaEnemigo != null) labelFuerzaEnemigo.setText("Fuerza: -");
+        if (vidaEnemigoBarra != null && !mapa.getEnemigos().isEmpty()) {
+            Enemigo enemigo = mapa.getEnemigos().get(0);
+            double progresoEnemigo = Math.max(0.0, Math.min(1.0, enemigo.getHealth() / 100.0));
+            vidaEnemigoBarra.setProgress(progresoEnemigo);
         }
     }
 
-    private boolean estanAdyacentes(JuegoCharacter a, JuegoCharacter b) {
-        int dx = Math.abs(a.getX() - b.getX());
-        int dy = Math.abs(a.getY() - b.getY());
-        return dx + dy == 1;
-    }
+    private void irAPantallaDerrota() {
+        try {
+            javafx.fxml.FXMLLoader loader = new javafx.fxml.FXMLLoader(
+                    getClass().getResource("/com/jorge_hugo_javier/Vistas/Derrota.fxml"));
+            javafx.scene.Parent root = loader.load();
+            javafx.scene.Scene scene = new javafx.scene.Scene(root);
 
-    private boolean todosLosEnemigosDerrotados() {
-        return mapa.getEnemigos().stream().allMatch(Enemigo::isDead);
-    }
-
-    private void mostrarPantallaVictoria() {
-        Platform.runLater(() -> {
-            try {
-                FXMLLoader loader = new FXMLLoader(getClass().getResource("/com/jorge_hugo_javier/Vistas/Victoria.fxml"));
-                Parent root = loader.load();
-                Stage stage = (Stage) gridPane.getScene().getWindow();
-                stage.setScene(new Scene(root));
-                stage.show();
-            } catch (IOException e) {
-                System.err.println("Error al cargar pantalla de victoria: " + e.getMessage());
-            }
-        });
+            // Obtener el Stage desde cualquier nodo (por ejemplo el gridPane)
+            javafx.stage.Stage stage = (javafx.stage.Stage) gridPane.getScene().getWindow();
+            stage.setScene(scene);
+            stage.show();
+        } catch (IOException e) {
+            System.err.println("❌ Error al cargar la pantalla de derrota: " + e.getMessage());
+        }
     }
 
     private void guardarEstadisticasJugador() {
