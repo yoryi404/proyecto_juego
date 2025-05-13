@@ -8,7 +8,6 @@ import com.jorge_hugo_javier.Model.Jugador;
 import javafx.fxml.FXML;
 import javafx.fxml.FXMLLoader;
 import javafx.scene.control.Label;
-import javafx.scene.control.ProgressBar;
 import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
 import javafx.scene.input.KeyEvent;
@@ -19,11 +18,11 @@ import javafx.scene.Parent;
 import javafx.scene.Scene;
 import javafx.scene.control.Alert;
 import javafx.application.Platform;
-import javafx.scene.control.ProgressBar;
 import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Random;
 import java.io.*;
 
 
@@ -46,10 +45,6 @@ public class ControladorDeJuego {
 
     @FXML
     private Label labelVelocidad;
-
-     @FXML private ProgressBar vidaJugadorBarra; // AÑADIDO
-    
-    @FXML private ProgressBar vidaEnemigoBarra; // AÑADIDO
 
     private Jugador jugador;
     private JuegoMap mapa;
@@ -196,21 +191,63 @@ public class ControladorDeJuego {
      */
     private void moverEnemigos() {
         for (Enemigo e : mapa.getEnemigos()) {
-            if (e.isDead())
-                continue;
+            if (e.isDead()) continue;
 
             if (estanAdyacentes(e, jugador)) {
                 jugador.receiveDamage(e.getAttack());
-                System.out.println(e.getName() + " ataca al jugador: -" + e.getAttack() + " vida.");
-
                 if (jugador.isDead()) {
                     mostrarFinPartida("Has sido derrotado por " + e.getName() + "...");
                     return;
                 }
             } else {
-                e.moverHacia(jugador.getX(), jugador.getY(), mapa);
+                // 🆕 Si el jugador está dentro del rango 3x3, el enemigo lo persigue
+                if (estaEnRango3x3(e)) {
+                    e.moverHacia(jugador.getX(), jugador.getY(), mapa);
+                } else {
+                    moverAleatorio(e); // 🆕 Movimiento aleatorio si está lejos
+                }
             }
         }
+
+        if (todosLosEnemigosDerrotados()) {
+            mostrarPantallaVictoria();
+        }
+    }
+
+    // 🆕 Verifica si el jugador está en un área de 3x3 alrededor del enemigo
+    private boolean estaEnRango3x3(Enemigo enemigo) {
+        int dx = Math.abs(enemigo.getX() - jugador.getX());
+        int dy = Math.abs(enemigo.getY() - jugador.getY());
+        return dx <= 1 && dy <= 1;
+    }
+
+    // 🆕 Mueve al enemigo a una celda adyacente aleatoria válida
+    private void moverAleatorio(Enemigo enemigo) {
+        Random rand = new Random();
+        int[][] dirs = {{1,0},{-1,0},{0,1},{0,-1}};
+        List<int[]> opciones = new ArrayList<>();
+
+        for (int[] dir : dirs) {
+            int nuevoX = enemigo.getX() + dir[0];
+            int nuevoY = enemigo.getY() + dir[1];
+            if (mapa.isInsideBounds(nuevoX, nuevoY)
+                    && mapa.getCell(nuevoX, nuevoY).isWalkable()
+                    && mapa.getCell(nuevoX, nuevoY).getOccupant() == null) {
+                opciones.add(dir);
+            }
+        }
+
+        if (!opciones.isEmpty()) {
+            int[] mov = opciones.get(rand.nextInt(opciones.size()));
+            int nuevoX = enemigo.getX() + mov[0];
+            int nuevoY = enemigo.getY() + mov[1];
+            mapa.getCell(enemigo.getX(), enemigo.getY()).setOccupant(null);
+            enemigo.setX(nuevoX);
+            enemigo.setY(nuevoY);
+            mapa.getCell(nuevoX, nuevoY).setOccupant(enemigo);
+        }
+    
+
         boolean todosMuertos = mapa.getEnemigos().stream().allMatch(Enemigo::isDead);
         if (todosMuertos) {
             mostrarPantallaVictoria();
@@ -381,18 +418,6 @@ public class ControladorDeJuego {
             labelDefensa.setText("Defensa: " + jugador.getDefensa());
         if (labelVelocidad != null)
             labelVelocidad.setText("Velocidad: " + jugador.getVelocidad());
-    
-        // ACTUALIZAR BARRAS DE VIDA
-        if (vidaJugadorBarra != null) {
-            double progresoJugador = Math.max(0.0, Math.min(1.0, jugador.getHealth() / 100.0));
-            vidaJugadorBarra.setProgress(progresoJugador);
-        }
-
-        if (vidaEnemigoBarra != null && !mapa.getEnemigos().isEmpty()) {
-            Enemigo enemigo = mapa.getEnemigos().get(0);
-            double progresoEnemigo = Math.max(0.0, Math.min(1.0, enemigo.getHealth() / 100.0));
-            vidaEnemigoBarra.setProgress(progresoEnemigo);
-        }
     }
 
     private void irAPantallaDerrota() {
