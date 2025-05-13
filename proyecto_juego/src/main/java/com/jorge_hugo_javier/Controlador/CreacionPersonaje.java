@@ -25,34 +25,45 @@ public class CreacionPersonaje {
     private void crearPersonaje() {
         try {
             String nombre = nombreField.getText();
-            int salud = Integer.parseInt(saludField.getText());
-            int fuerza = Integer.parseInt(fuerzaField.getText());
-            int defensa = Integer.parseInt(defensaField.getText());
-            int velocidad = Integer.parseInt(velocidadField.getText());
+            int salud = parseCampo(saludField.getText(), "Salud");
+            int fuerza = parseCampo(fuerzaField.getText(), "Fuerza");
+            int defensa = parseCampo(defensaField.getText(), "Defensa");
+            int velocidad = parseCampo(velocidadField.getText(), "Velocidad");
+
+            // Si alguno de los valores fue inválido, se habrá lanzado una excepción
+            // y esta parte no se ejecutará
 
             Jugador jugador = new Jugador(nombre, salud, fuerza, defensa, velocidad);
             System.out.println("Jugador creado: " + jugador);
 
-            // Cargar GameView.fxml
             FXMLLoader loader = new FXMLLoader(getClass().getResource("/com/jorge_hugo_javier/Vistas/GameView.fxml"));
             Parent root = loader.load();
 
-            // Pasar el jugador al controlador de GameView
             ControladorPrincipal controlador = loader.getController();
             controlador.setJugador(jugador);
 
-            // Cambiar de escena
             Stage stage = (Stage) nombreField.getScene().getWindow();
             stage.setScene(new Scene(root));
             stage.setTitle("Juego de Mazmorras");
             stage.show();
 
         } catch (NumberFormatException e) {
-            mostrarAlerta("Error de entrada", "Introduce solo números válidos para salud, fuerza, defensa y velocidad.");
+            mostrarAlerta("Error de entrada", "Introduce solo números válidos (0 a 100) en salud, fuerza, defensa y velocidad.");
         } catch (IOException e) {
             mostrarAlerta("Error al cargar la vista", "No se pudo cargar GameView.fxml:\n" + e.getMessage());
             e.printStackTrace();
         }
+    }
+
+    private int parseCampo(String texto, String campo) throws NumberFormatException {
+        int valor = Integer.parseInt(texto);
+        if (valor < 0) {
+            throw new NumberFormatException(campo + " no puede ser negativo.");
+        }
+        if (valor > 100) {
+            throw new NumberFormatException("Error: el valor de " + campo + " excede más de 100.");
+        }
+        return valor;
     }
 
     private void mostrarAlerta(String titulo, String mensaje) {
@@ -62,6 +73,4 @@ public class CreacionPersonaje {
         alert.setContentText(mensaje);
         alert.showAndWait();
     }
-
-    
 }
