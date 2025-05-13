@@ -24,6 +24,7 @@ import java.util.ArrayList;
 import java.util.List;
 import java.io.*;
 
+
 public class ControladorDeJuego {
 
     @FXML
@@ -239,7 +240,31 @@ public class ControladorDeJuego {
                 }
             }
         }
+        // Después de derrotar enemigos, comprobar si ganaste
+        if (todosLosEnemigosDerrotados()) {
+            System.out.println("🎉 Todos los enemigos han sido derrotados.");
+            mostrarPantallaVictoria();
+        }
     }
+
+    private boolean todosLosEnemigosDerrotados() {
+        return mapa.getEnemigos().stream().allMatch(Enemigo::isDead);
+    }
+
+    private void mostrarPantallaVictoria() {
+    try {
+        FXMLLoader loader = new FXMLLoader(getClass().getResource("/com/jorge_hugo_javier/Vistas/Victoria.fxml"));
+        Parent root = loader.load();
+        Stage stage = (Stage) gridPane.getScene().getWindow();
+        stage.setScene(new Scene(root));
+        stage.show();
+        System.out.println("✅ Se ha mostrado la pantalla de victoria.");
+    } catch (IOException e) {
+        System.err.println("❌ Error al cargar la pantalla de victoria: " + e.getMessage());
+    }
+    }
+
+
 
     /**
      * 
@@ -288,20 +313,6 @@ public class ControladorDeJuego {
         }
     }
 
-    private void mostrarPantallaVictoria() {
-        try {
-            FXMLLoader loader = new FXMLLoader(getClass().getResource("/com/jorge_hugo_javier/Vistas/Victoria.fxml"));
-            Parent root = loader.load();
-
-            Stage stage = (Stage) gridPane.getScene().getWindow();
-            stage.setScene(new Scene(root));
-            stage.setTitle("¡Victoria!");
-            stage.show();
-        } catch (IOException e) {
-            e.printStackTrace();
-        }
-    }
-
     /**
      * Redibuja el mapa, el jugador y los enemigos
      */
@@ -342,6 +353,11 @@ public class ControladorDeJuego {
                         imgEnemigo.setFitHeight(35);
                         panel.getChildren().add(imgEnemigo);
                     }
+                }
+
+                if (todosLosEnemigosDerrotados()) {
+                    guardarEstadisticasVictoria();
+                    mostrarPantallaVictoria();
                 }
 
                 gridPane.add(panel, col, fila);
@@ -403,4 +419,23 @@ public class ControladorDeJuego {
             System.err.println("❌ Error al guardar estadísticas: " + e.getMessage());
         }
     }
+
+    private void guardarEstadisticasVictoria() {
+    String ruta = "src/main/resources/com/jorge_hugo_javier/Estadisticas/estadisticas.txt";
+
+    String linea = jugador.getNombre() + " | Salud final: " + jugador.getHealth() +
+                   " | Fuerza: " + jugador.getAttack() +
+                   " | Defensa: " + jugador.getDefensa() +
+                   " | Velocidad: " + jugador.getVelocidad() +
+                   " | Resultado: VICTORIA";
+
+    try {
+        java.nio.file.Files.write(java.nio.file.Paths.get(ruta),
+                (linea + System.lineSeparator()).getBytes(), java.nio.file.StandardOpenOption.CREATE,
+                java.nio.file.StandardOpenOption.APPEND);
+        System.out.println("✅ Estadísticas de victoria guardadas.");
+    } catch (IOException e) {
+        System.err.println("❌ Error al guardar estadísticas de victoria: " + e.getMessage());
+    }
+}
 }

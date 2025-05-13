@@ -1,44 +1,68 @@
 package com.jorge_hugo_javier.Controlador;
 
-import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
-import javafx.fxml.FXMLLoader;
-import javafx.scene.Scene;
-import javafx.scene.control.Button;
+import javafx.scene.control.TextArea;
+import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
+import javafx.fxml.FXMLLoader;
 import javafx.scene.Parent;
+import javafx.scene.Scene;
 import javafx.stage.Stage;
 
 import java.io.IOException;
+import java.nio.file.Files;
+import java.nio.file.Paths;
+import java.util.List;
+
 
 public class ControladorVictoria {
 
     @FXML
-    private ImageView victoriaImage;
+    private TextArea textAreaEstadisticas;
 
     @FXML
-    private Button btnReiniciar;
+    private ImageView imagenVictoria;
 
     @FXML
-    private Button btnSalir;
+    public void initialize() {
+    // Cargar imagen de victoria
+    try {
+        imagenVictoria.setImage(new javafx.scene.image.Image(
+            getClass().getResourceAsStream("/com/jorge_hugo_javier/Imagenes/victoria.png")
+        ));
+    } catch (Exception e) {
+        System.err.println("❌ No se pudo cargar la imagen de victoria: " + e.getMessage());
+    }
+
+    // Mostrar estadísticas
+    String ruta = "src/main/resources/com/jorge_hugo_javier/Estadisticas/estadisticas.txt";
+    try {
+        List<String> lineas = Files.readAllLines(Paths.get(ruta));
+        if (lineas.isEmpty()) {
+            textAreaEstadisticas.setText("No hay estadísticas guardadas aún.");
+        } else {
+            StringBuilder contenido = new StringBuilder("🎯 Estadísticas del jugador:\n\n");
+            for (String linea : lineas) {
+                contenido.append("• ").append(linea).append("\n");
+            }
+            textAreaEstadisticas.setText(contenido.toString());
+        }
+    } catch (IOException e) {
+        textAreaEstadisticas.setText("❌ Error al leer el archivo de estadísticas.");
+        System.err.println("❌ Error leyendo estadísticas: " + e.getMessage());
+    }
+    }
 
     @FXML
-    private void reiniciarJuego(ActionEvent event) {
+    private void volverACrearPersonaje() {
         try {
             FXMLLoader loader = new FXMLLoader(getClass().getResource("/com/jorge_hugo_javier/Vistas/CreacionPersonaje.fxml"));
             Parent root = loader.load();
-            Stage stage = (Stage) btnReiniciar.getScene().getWindow();
+            Stage stage = (Stage) textAreaEstadisticas.getScene().getWindow();
             stage.setScene(new Scene(root));
-            stage.setTitle("Crear Personaje");
             stage.show();
         } catch (IOException e) {
-            e.printStackTrace();
+            System.err.println("❌ Error al volver a creación del personaje: " + e.getMessage());
         }
     }
-
-    @FXML
-    private void salirJuego(ActionEvent event) {
-        System.exit(0);
-    }
 }
-
