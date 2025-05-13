@@ -1,33 +1,31 @@
 <?xml version="1.0" encoding="UTF-8"?>
 
-<?import javafx.geometry.Insets?>
-<?import javafx.scene.control.Label?>
-<?import javafx.scene.layout.BorderPane?>
-<?import javafx.scene.layout.GridPane?>
-<?import javafx.scene.layout.VBox?>
+<?import javafx.scene.layout.*?>
+<?import javafx.scene.control.*?>
+<?import javafx.scene.image.ImageView?>
 
 <BorderPane xmlns="http://javafx.com/javafx/8" xmlns:fx="http://javafx.com/fxml/1"
             fx:controller="com.jorge_hugo_javier.Controlador.ControladorDeJuego">
 
-    <center>
-        <GridPane fx:id="gridPane" BorderPane.alignment="CENTER" />
-    </center>
-
-    <right>
-        <VBox spacing="10" padding="20" BorderPane.alignment="CENTER_RIGHT">
-
-            <Label text="Jugador" style="-fx-font-weight: bold;" />
+    <!-- Estadísticas del jugador y enemigo -->
+    <left>
+        <VBox spacing="10.0" style="-fx-padding: 20;" BorderPane.alignment="CENTER">
             <Label fx:id="labelNombre" text="Nombre: " />
-            <Label fx:id="labelVida" text="Vida: " />
+            <Label fx:id="labelVida" text="Salud: " />
             <Label fx:id="labelFuerza" text="Fuerza: " />
             <Label fx:id="labelDefensa" text="Defensa: " />
             <Label fx:id="labelVelocidad" text="Velocidad: " />
 
-            <Label text="Enemigo cercano" style="-fx-font-weight: bold; -fx-padding: 20 0 0 0;" />
-            <Label fx:id="labelNombreEnemigo" text="Nombre: " />
-            <Label fx:id="labelVidaEnemigo" text="Vida: " />
-            <Label fx:id="labelFuerzaEnemigo" text="Fuerza: " />
-
+            <Label text="Estadísticas Enemigo:" style="-fx-font-weight: bold; -fx-padding: 10 0 0 0;"/>
+            <Label fx:id="labelNombreEnemigo" text="Nombre Enemigo: " />
+            <Label fx:id="labelVidaEnemigo" text="Vida Enemigo: " />
         </VBox>
-    </right>
+    </left>
+
+    <!-- Mapa del juego -->
+    <center>
+        <ScrollPane fitToHeight="true" fitToWidth="true">
+            <GridPane fx:id="gridPane" prefWidth="800.0" prefHeight="600.0" />
+        </ScrollPane>
+    </center>
 </BorderPane>

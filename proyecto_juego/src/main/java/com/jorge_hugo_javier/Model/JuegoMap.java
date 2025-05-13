@@ -22,7 +22,10 @@ public class JuegoMap {
     }
 
     public void addEnemigo(Enemigo e) {
-        enemigos.add(e);
+    enemigos.add(e);
+    if (isInsideBounds(e.getX(), e.getY())) {
+        getCell(e.getX(), e.getY()).setOccupant(e);
+    }
     }
 
     public List<Enemigo> getEnemigos() {
