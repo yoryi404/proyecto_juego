@@ -1,32 +1,33 @@
 <?xml version="1.0" encoding="UTF-8"?>
 
-<?import javafx.scene.layout.*?>
-<?import javafx.scene.control.*?>
 <?import javafx.geometry.Insets?>
+<?import javafx.scene.control.Label?>
+<?import javafx.scene.layout.BorderPane?>
+<?import javafx.scene.layout.GridPane?>
+<?import javafx.scene.layout.VBox?>
 
 <BorderPane xmlns="http://javafx.com/javafx/8" xmlns:fx="http://javafx.com/fxml/1"
             fx:controller="com.jorge_hugo_javier.Controlador.ControladorDeJuego">
 
     <center>
-        <GridPane fx:id="gridPane" prefWidth="800.0" prefHeight="600.0" BorderPane.alignment="CENTER" />
+        <GridPane fx:id="gridPane" BorderPane.alignment="CENTER" />
     </center>
 
-    <bottom>
-        <Label fx:id="labelVida" text="Vida: " BorderPane.alignment="CENTER" />
-    </bottom>
+    <right>
+        <VBox spacing="10" padding="20" BorderPane.alignment="CENTER_RIGHT">
 
-    <left>
-        <VBox spacing="10.0" alignment="TOP_LEFT" prefWidth="200" BorderPane.alignment="CENTER">
-            <padding>
-                <Insets top="20" left="10" right="10" bottom="10"/>
-            </padding>
-            <children>
-                <Label fx:id="labelNombre" text="Nombre: "/>
-                <Label fx:id="labelFuerza" text="Fuerza: "/>
-                <Label fx:id="labelDefensa" text="Defensa: "/>
-                <Label fx:id="labelVelocidad" text="Velocidad: "/>
-            </children>
+            <Label text="Jugador" style="-fx-font-weight: bold;" />
+            <Label fx:id="labelNombre" text="Nombre: " />
+            <Label fx:id="labelVida" text="Vida: " />
+            <Label fx:id="labelFuerza" text="Fuerza: " />
+            <Label fx:id="labelDefensa" text="Defensa: " />
+            <Label fx:id="labelVelocidad" text="Velocidad: " />
+
+            <Label text="Enemigo cercano" style="-fx-font-weight: bold; -fx-padding: 20 0 0 0;" />
+            <Label fx:id="labelNombreEnemigo" text="Nombre: " />
+            <Label fx:id="labelVidaEnemigo" text="Vida: " />
+            <Label fx:id="labelFuerzaEnemigo" text="Fuerza: " />
+
         </VBox>
-    </left>
-
+    </right>
 </BorderPane>

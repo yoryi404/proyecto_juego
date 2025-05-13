@@ -45,6 +45,15 @@ public class ControladorDeJuego {
     @FXML
     private Label labelVelocidad;
 
+    @FXML
+    private Label labelNombreEnemigo;
+    
+    @FXML
+    private Label labelVidaEnemigo;
+
+    @FXML
+    private Label labelFuerzaEnemigo;
+
     private Jugador jugador;
     private JuegoMap mapa;
 
@@ -116,7 +125,7 @@ public class ControladorDeJuego {
         moverEnemigos();
 
         if (jugador.isDead()) {
-            System.out.println("☠ El jugador ha muerto.");
+            System.out.println("El jugador ha muerto.");
             guardarEstadisticasYMostrarPantallaDerrota();
         }
     }
@@ -145,7 +154,7 @@ public class ControladorDeJuego {
                 stage.setScene(new Scene(root));
                 stage.show();
             } catch (IOException e) {
-                System.err.println("❌ Error al cargar la pantalla de derrota: " + e.getMessage());
+                System.err.println("Error al cargar la pantalla de derrota: " + e.getMessage());
             }
         });
     }
@@ -242,7 +251,7 @@ public class ControladorDeJuego {
         }
         // Después de derrotar enemigos, comprobar si ganaste
         if (todosLosEnemigosDerrotados()) {
-            System.out.println("🎉 Todos los enemigos han sido derrotados.");
+            System.out.println("Todos los enemigos han sido derrotados.");
             mostrarPantallaVictoria();
         }
     }
@@ -258,9 +267,9 @@ public class ControladorDeJuego {
         Stage stage = (Stage) gridPane.getScene().getWindow();
         stage.setScene(new Scene(root));
         stage.show();
-        System.out.println("✅ Se ha mostrado la pantalla de victoria.");
+        System.out.println("Se ha mostrado la pantalla de victoria.");
     } catch (IOException e) {
-        System.err.println("❌ Error al cargar la pantalla de victoria: " + e.getMessage());
+        System.err.println("Error al cargar la pantalla de victoria: " + e.getMessage());
     }
     }
 
@@ -305,7 +314,7 @@ public class ControladorDeJuego {
         boolean todosMuertos = mapa.getEnemigos().stream().allMatch(e -> !e.isAlive());
 
         if (todosMuertos) {
-            System.out.println("🎉 ¡Has derrotado a todos los enemigos!");
+            System.out.println("¡Has derrotado a todos los enemigos!");
 
             mostrarPantallaVictoria();
 
@@ -375,6 +384,22 @@ public class ControladorDeJuego {
             labelDefensa.setText("Defensa: " + jugador.getDefensa());
         if (labelVelocidad != null)
             labelVelocidad.setText("Velocidad: " + jugador.getVelocidad());
+    
+        // Mostrar estadísticas del enemigo (si lo hay)
+    Enemigo enemigoCercano = mapa.getEnemigos().stream()
+            .filter(e -> !e.isDead() && estanAdyacentes(jugador, e))
+            .findFirst()
+            .orElse(null);
+
+    if (enemigoCercano != null) {
+        if (labelNombreEnemigo != null) labelNombreEnemigo.setText("Nombre: " + enemigoCercano.getName());
+        if (labelVidaEnemigo != null) labelVidaEnemigo.setText("Vida: " + enemigoCercano.getHealth());
+        if (labelFuerzaEnemigo != null) labelFuerzaEnemigo.setText("Fuerza: " + enemigoCercano.getAttack());
+    } else {
+        if (labelNombreEnemigo != null) labelNombreEnemigo.setText("Nombre: -");
+        if (labelVidaEnemigo != null) labelVidaEnemigo.setText("Vida: -");
+        if (labelFuerzaEnemigo != null) labelFuerzaEnemigo.setText("Fuerza: -");
+    }
     }
 
     private void irAPantallaDerrota() {
@@ -389,7 +414,7 @@ public class ControladorDeJuego {
             stage.setScene(scene);
             stage.show();
         } catch (IOException e) {
-            System.err.println("❌ Error al cargar la pantalla de derrota: " + e.getMessage());
+            System.err.println("Error al cargar la pantalla de derrota: " + e.getMessage());
         }
     }
 
@@ -416,7 +441,7 @@ public class ControladorDeJuego {
             writer.close();
             System.out.println("[✔] Estadísticas guardadas correctamente.");
         } catch (IOException e) {
-            System.err.println("❌ Error al guardar estadísticas: " + e.getMessage());
+            System.err.println("Error al guardar estadísticas: " + e.getMessage());
         }
     }
 
@@ -433,9 +458,9 @@ public class ControladorDeJuego {
         java.nio.file.Files.write(java.nio.file.Paths.get(ruta),
                 (linea + System.lineSeparator()).getBytes(), java.nio.file.StandardOpenOption.CREATE,
                 java.nio.file.StandardOpenOption.APPEND);
-        System.out.println("✅ Estadísticas de victoria guardadas.");
+        System.out.println("Estadísticas de victoria guardadas.");
     } catch (IOException e) {
-        System.err.println("❌ Error al guardar estadísticas de victoria: " + e.getMessage());
+        System.err.println("Error al guardar estadísticas de victoria: " + e.getMessage());
     }
 }
 }

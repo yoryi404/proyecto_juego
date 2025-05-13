@@ -6,45 +6,55 @@ public class Enemigo extends JuegoCharacter {
         super(name, health, attack, x, y);
     }
 
+    /**
+     * Acción del enemigo en su turno. Si el jugador está adyacente, lo ataca.
+     * Si no, se mueve hacia él.
+     */
     @Override
     public void takeTurn(JuegoMap map, JuegoCharacter enemigo, JuegoCharacter jugador) {
         int dx = jugador.getX() - this.x;
         int dy = jugador.getY() - this.y;
 
-        // Ataca si el jugador está adyacente (movimiento Manhattan de 1)
         if (Math.abs(dx) + Math.abs(dy) == 1) {
             jugador.receiveDamage(this.attack);
         } else {
-            int newX = this.x + Integer.signum(dx);
-            int newY = this.y + Integer.signum(dy);
-            moveTo(newX, newY, map);
+            moverHacia(jugador.getX(), jugador.getY(), map);
         }
     }
-    // Aquí podrías añadir lógica futura como: patrullar, detectar distancia, huir,
-    // etc.
 
+    /**
+     * Mueve al enemigo una celda en dirección al jugador, si es posible.
+     */
     public void moverHacia(int xJugador, int yJugador, JuegoMap mapa) {
         int dx = Integer.compare(xJugador, this.getX());
         int dy = Integer.compare(yJugador, this.getY());
 
-        // Intenta moverse en dirección X primero
+        // Prioridad en X
         if (dx != 0) {
             int nuevoX = this.getX() + dx;
             int nuevoY = this.getY();
-            moveTo(nuevoX, nuevoY, mapa);
-            return;
+            if (puedeMoverA(nuevoX, nuevoY, mapa)) {
+                moveTo(nuevoX, nuevoY, mapa);
+                return;
+            }
         }
 
-        // Si no puede moverse en X, intenta Y
+        // Luego intenta Y
         if (dy != 0) {
             int nuevoX = this.getX();
             int nuevoY = this.getY() + dy;
-            moveTo(nuevoX, nuevoY, mapa);
+            if (puedeMoverA(nuevoX, nuevoY, mapa)) {
+                moveTo(nuevoX, nuevoY, mapa);
+            }
         }
     }
 
-    public String getNombre() {
-
-        throw new UnsupportedOperationException("Unimplemented method 'getNombre'");
+    /**
+     * Comprueba si la celda a la que quiere moverse es válida.
+     */
+    private boolean puedeMoverA(int x, int y, JuegoMap mapa) {
+        if (!mapa.isInsideBounds(x, y)) return false;
+        Cell celda = mapa.getCell(x, y);
+        return celda.isWalkable() && (celda.getOccupant() == null || celda.getOccupant().isDead());
     }
 }

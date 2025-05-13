@@ -64,7 +64,7 @@ public class ControladorPrincipal {
             Scene escenaJuego = new Scene(root);
             escenaJuego.setOnKeyPressed(controladorDeJuego::manejarTeclado);
 
-            // ⚠️ Esperamos a que gridMapa tenga escena antes de hacer el cambio
+            // Esperamos a que gridMapa tenga escena antes de hacer el cambio
             javafx.application.Platform.runLater(() -> {
                 Stage stage = (Stage) gridMapa.getScene().getWindow();
                 stage.setScene(escenaJuego);
@@ -110,11 +110,11 @@ public class ControladorPrincipal {
                     break;
             }
 
-            Enemigo orco = new Enemigo("Orco", 15, 3, enemyX, enemyY);
+            Enemigo orco = new Enemigo("Orco", 50, 3, enemyX, enemyY);
             mapa.addEnemigo(orco);
             grid[enemyY][enemyX].setOccupant(orco); // coloca al orco en esa celda
 
-            System.out.println("🗺️ Mapa cargado correctamente con enemigos.");
+            System.out.println(" Mapa cargado correctamente con enemigos.");
 
         } catch (IOException e) {
             System.err.println("Error al leer el archivo Nivel1.txt");
@@ -191,7 +191,7 @@ public class ControladorPrincipal {
                     jugadorFila = fila;
                     jugadorCol = col;
                     jugador.setPosicion(col, fila);
-                    System.out.println("🧍 Jugador colocado en: X = " + col + ", Y = " + fila);
+                    System.out.println(" Jugador colocado en: X = " + col + ", Y = " + fila);
                     return;
                 }
             }
