@@ -7,6 +7,7 @@ import com.jorge_hugo_javier.Model.Jugador;
 import javafx.fxml.FXML;
 import javafx.fxml.FXMLLoader;
 import javafx.scene.control.Label;
+import javafx.scene.control.ProgressBar;
 import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
 import javafx.scene.input.KeyEvent;
@@ -17,6 +18,7 @@ import javafx.scene.Parent;
 import javafx.scene.Scene;
 import javafx.scene.control.Alert;
 import javafx.application.Platform;
+import javafx.scene.control.ProgressBar; // AÑADIDO
 import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
 import java.io.*;
@@ -39,6 +41,10 @@ public class ControladorDeJuego {
     @FXML private Label labelDefensa;
     
     @FXML private Label labelVelocidad;
+    
+    @FXML private ProgressBar vidaJugadorBarra; // AÑADIDO
+    
+    @FXML private ProgressBar vidaEnemigoBarra; // AÑADIDO
 
     private Jugador jugador;
     private JuegoMap mapa;
@@ -271,7 +277,19 @@ public class ControladorDeJuego {
         if (labelFuerza != null) labelFuerza.setText("Fuerza: " + jugador.getFuerza());
         if (labelDefensa != null) labelDefensa.setText("Defensa: " + jugador.getDefensa());
         if (labelVelocidad != null) labelVelocidad.setText("Velocidad: " + jugador.getVelocidad());
+    
+      if (vidaJugadorBarra != null) {
+            double progresoJugador = Math.max(0.0, Math.min(1.0, jugador.getHealth() / 100.0));
+            vidaJugadorBarra.setProgress(progresoJugador);
+        }
+
+        if (vidaEnemigoBarra != null && !mapa.getEnemigos().isEmpty()) {
+            Enemigo enemigo = mapa.getEnemigos().get(0);
+            double progresoEnemigo = Math.max(0.0, Math.min(1.0, enemigo.getHealth() / 100.0));
+            vidaEnemigoBarra.setProgress(progresoEnemigo);
+        }
     }
+
 
     private void irAPantallaDerrota() {
     try {
