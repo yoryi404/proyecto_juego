@@ -26,9 +26,36 @@
         </HBox>
     </top>
 
-    <!-- ✅ ZONA DE JUEGO -->
+    <!-- ✅ ZONA DE JUEGO 10x10 -->
     <center>
-        <GridPane fx:id="gridPane" prefWidth="800.0" prefHeight="600.0" BorderPane.alignment="CENTER" />
+        <GridPane fx:id="gridPane" prefWidth="400.0" prefHeight="400.0" BorderPane.alignment="CENTER">
+            <columnConstraints>
+                <!-- 10 columnas de 40px -->
+                <ColumnConstraints prefWidth="40.0" />
+                <ColumnConstraints prefWidth="40.0" />
+                <ColumnConstraints prefWidth="40.0" />
+                <ColumnConstraints prefWidth="40.0" />
+                <ColumnConstraints prefWidth="40.0" />
+                <ColumnConstraints prefWidth="40.0" />
+                <ColumnConstraints prefWidth="40.0" />
+                <ColumnConstraints prefWidth="40.0" />
+                <ColumnConstraints prefWidth="40.0" />
+                <ColumnConstraints prefWidth="40.0" />
+            </columnConstraints>
+            <rowConstraints>
+                <!-- 10 filas de 40px -->
+                <RowConstraints prefHeight="40.0" />
+                <RowConstraints prefHeight="40.0" />
+                <RowConstraints prefHeight="40.0" />
+                <RowConstraints prefHeight="40.0" />
+                <RowConstraints prefHeight="40.0" />
+                <RowConstraints prefHeight="40.0" />
+                <RowConstraints prefHeight="40.0" />
+                <RowConstraints prefHeight="40.0" />
+                <RowConstraints prefHeight="40.0" />
+                <RowConstraints prefHeight="40.0" />
+            </rowConstraints>
+        </GridPane>
     </center>
 
     <!-- ✅ VIDA DEL JUGADOR EN TEXTO -->
