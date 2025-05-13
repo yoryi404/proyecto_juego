@@ -1,6 +1,5 @@
 package com.jorge_hugo_javier.Model;
 
-
 public class Enemigo extends JuegoCharacter {
 
     public Enemigo(String name, int health, int attack, int x, int y) {
@@ -21,24 +20,31 @@ public class Enemigo extends JuegoCharacter {
             moveTo(newX, newY, map);
         }
     }
-        // Aquí podrías añadir lógica futura como: patrullar, detectar distancia, huir, etc.
+    // Aquí podrías añadir lógica futura como: patrullar, detectar distancia, huir,
+    // etc.
 
+    public void moverHacia(int xJugador, int yJugador, JuegoMap mapa) {
+        int dx = Integer.compare(xJugador, this.getX());
+        int dy = Integer.compare(yJugador, this.getY());
 
-        public void moverHacia(int xJugador, int yJugador) {
-            int x = this.getX();
-            int y = this.getY();
-    
-            if (x < xJugador) x++;
-            else if (x > xJugador) x--;
-            if (y < yJugador) y++;
-            else if (y > yJugador) y--;
-    
-            this.setX(x);
-            this.setY(y);
+        // Intenta moverse en dirección X primero
+        if (dx != 0) {
+            int nuevoX = this.getX() + dx;
+            int nuevoY = this.getY();
+            moveTo(nuevoX, nuevoY, mapa);
+            return;
         }
 
-        public String getNombre() {
-           
-            throw new UnsupportedOperationException("Unimplemented method 'getNombre'");
+        // Si no puede moverse en X, intenta Y
+        if (dy != 0) {
+            int nuevoX = this.getX();
+            int nuevoY = this.getY() + dy;
+            moveTo(nuevoX, nuevoY, mapa);
         }
+    }
+
+    public String getNombre() {
+
+        throw new UnsupportedOperationException("Unimplemented method 'getNombre'");
+    }
 }

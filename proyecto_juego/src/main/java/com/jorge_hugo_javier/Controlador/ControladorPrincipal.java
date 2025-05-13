@@ -21,14 +21,22 @@ import com.jorge_hugo_javier.Model.*;
 
 public class ControladorPrincipal {
 
-    @FXML private GridPane gridMapa;
-    @FXML private Label nombreJugador;
-    @FXML private Label saludJugador;
-    @FXML private Label fuerzaJugador;
-    @FXML private Label defensaJugador;
-    @FXML private Label velocidadJugador;
-    @FXML private ListView<String> listaTurnos;
-    @FXML private Label estadisticasJugador;
+    @FXML
+    private GridPane gridMapa;
+    @FXML
+    private Label nombreJugador;
+    @FXML
+    private Label saludJugador;
+    @FXML
+    private Label fuerzaJugador;
+    @FXML
+    private Label defensaJugador;
+    @FXML
+    private Label velocidadJugador;
+    @FXML
+    private ListView<String> listaTurnos;
+    @FXML
+    private Label estadisticasJugador;
 
     private Jugador jugador;
     protected JuegoMap mapa;
@@ -36,37 +44,37 @@ public class ControladorPrincipal {
     private int jugadorCol;
 
     public void setJugador(Jugador jugador) {
-    this.jugador = jugador;
-    actualizarEstadisticas();
+        this.jugador = jugador;
+        actualizarEstadisticas();
 
-    cargarMapaDesdeFichero();
-    buscarPosicionInicialJugador();
-    dibujarMapa();                  
+        cargarMapaDesdeFichero();
+        buscarPosicionInicialJugador();
+        dibujarMapa();
 
-    try {
-        FXMLLoader loader = new FXMLLoader(getClass().getResource("/com/jorge_hugo_javier/Vistas/Game.fxml"));
-        Parent root = loader.load();
+        try {
+            FXMLLoader loader = new FXMLLoader(getClass().getResource("/com/jorge_hugo_javier/Vistas/Game.fxml"));
+            Parent root = loader.load();
 
-        // Obtenemos el controlador de la nueva vista
-        ControladorDeJuego controladorDeJuego = loader.getController();
-        controladorDeJuego.setJugador(jugador);
-        controladorDeJuego.setMapa(mapa);
+            // Obtenemos el controlador de la nueva vista
+            ControladorDeJuego controladorDeJuego = loader.getController();
+            controladorDeJuego.setJugador(jugador);
+            controladorDeJuego.setMapa(mapa);
 
-        // Creamos y configuramos la nueva escena
-        Scene escenaJuego = new Scene(root);
-        escenaJuego.setOnKeyPressed(controladorDeJuego::manejarTeclado);
+            // Creamos y configuramos la nueva escena
+            Scene escenaJuego = new Scene(root);
+            escenaJuego.setOnKeyPressed(controladorDeJuego::manejarTeclado);
 
-        // ⚠️ Esperamos a que gridMapa tenga escena antes de hacer el cambio
-        javafx.application.Platform.runLater(() -> {
-            Stage stage = (Stage) gridMapa.getScene().getWindow();
-            stage.setScene(escenaJuego);
-            stage.show();
-        });
+            // ⚠️ Esperamos a que gridMapa tenga escena antes de hacer el cambio
+            javafx.application.Platform.runLater(() -> {
+                Stage stage = (Stage) gridMapa.getScene().getWindow();
+                stage.setScene(escenaJuego);
+                stage.show();
+            });
 
-    } catch (IOException e) {
-        e.printStackTrace();
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
     }
-}
 
     private void actualizarEstadisticas() {
         nombreJugador.setText("Nombre: " + jugador.getName());
@@ -87,13 +95,29 @@ public class ControladorPrincipal {
             }
 
             mapa = new JuegoMap(lineas);
-            mapa.addEnemigo(new Enemigo("Goblin", 10, 2, 1, 1));
-            mapa.addEnemigo(new Enemigo("Orco", 15, 3, 2, 1));
+            // Encuentra una posición alejada del jugador para el Orco
+            Cell[][] grid = mapa.getGrid();
+            int enemyX = grid[0].length - 2; // casi al final horizontal
+            int enemyY = grid.length - 2; // casi al final vertical
+
+            // Asegúrate de que sea una celda walkable
+            while (!grid[enemyY][enemyX].isWalkable()) {
+                if (enemyX > 0)
+                    enemyX--;
+                else if (enemyY > 0)
+                    enemyY--;
+                else
+                    break;
+            }
+
+            Enemigo orco = new Enemigo("Orco", 15, 3, enemyX, enemyY);
+            mapa.addEnemigo(orco);
+            grid[enemyY][enemyX].setOccupant(orco); // coloca al orco en esa celda
 
             System.out.println("🗺️ Mapa cargado correctamente con enemigos.");
 
         } catch (IOException e) {
-            System.err.println("❌ Error al leer el archivo Nivel1.txt");
+            System.err.println("Error al leer el archivo Nivel1.txt");
             e.printStackTrace();
         }
     }
@@ -141,7 +165,7 @@ public class ControladorPrincipal {
 
                         if (fila == jugador.getY() && col == jugador.getX()) {
                             Image imgJugador = new Image(getClass().getResourceAsStream(
-                                    "/com/jorge_hugo_javier/Vistas/jugador.png"));
+                                    "/com/jorge_hugo_javier/Vistas/jugador.jpg"));
                             ImageView viewJugador = new ImageView(imgJugador);
                             viewJugador.setFitWidth(35);
                             viewJugador.setFitHeight(35);
