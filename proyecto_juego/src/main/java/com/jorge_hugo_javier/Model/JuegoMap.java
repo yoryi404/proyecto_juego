@@ -57,4 +57,12 @@ public class JuegoMap {
 
         return resultado;
     }
+
+    // ✅ NUEVO MÉTODO para comprobar si un enemigo puede moverse a una celda
+    public boolean esPosicionValida(int x, int y) {
+        if (!isInsideBounds(x, y)) return false;
+
+        Cell celda = grid[y][x];
+        return celda.getType() == Cell.Type.FLOOR && celda.getOccupant() == null;
+    }
 }
