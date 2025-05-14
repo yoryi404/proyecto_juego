@@ -46,9 +46,6 @@ public class ControladorDeJuego {
     private GridPane gridPane;
 
     @FXML
-    private Label labelVidaTexto;
-
-    @FXML
     private Label labelVidaJugador;
 
     @FXML
@@ -502,7 +499,7 @@ private void actualizarBarrasYDatos() {
         }
 
         // Estadísticas del jugador
-        if (labelVida != null) labelVida.setText("Vida: " + jugador.getHealth());
+        if (labelVidaTexto != null) labelVidaTexto.setText("Vida: " + jugador.getHealth());
         if (labelNombre != null) labelNombre.setText("Nombre: " + jugador.getNombre());
         if (labelFuerza != null) labelFuerza.setText("Fuerza: " + jugador.getFuerza());
         if (labelDefensa != null) labelDefensa.setText("Defensa: " + jugador.getDefensa());
