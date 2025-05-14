@@ -617,13 +617,13 @@ public class ControladorDeJuego implements Observer {
             // 3) Añadir orcos según el nivel
             if (rutaArchivo.endsWith("Nivel1.txt")) {
                 // Un único orco en (5,5) —ajústalo a tu mapa
-                Enemigo orco1 = new Enemigo("Orco", 20, 5, 5, 5);
+                Enemigo orco1 = new Enemigo("Orco", 50, 5, 5, 5);
                 mapa.addEnemigo(orco1);
                 mapa.getCell(5, 5).setOccupant(orco1);
             } else {
                 // Dos orcos en Nivel2, en (5,5) y (7,3) por ejemplo
-                Enemigo orco1 = new Enemigo("Orco A", 20, 5, 5, 5);
-                Enemigo orco2 = new Enemigo("Orco B", 20, 5, 7, 3);
+                Enemigo orco1 = new Enemigo("Orco A", 40, 5, 5, 5);
+                Enemigo orco2 = new Enemigo("Orco B", 40, 10, 7, 3);
                 mapa.addEnemigo(orco1);
                 mapa.addEnemigo(orco2);
                 mapa.getCell(5, 5).setOccupant(orco1);
