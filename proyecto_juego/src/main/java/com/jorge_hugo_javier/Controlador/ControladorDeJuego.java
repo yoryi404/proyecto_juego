@@ -39,8 +39,10 @@ import javafx.scene.layout.GridPane;
 import javafx.scene.layout.StackPane;
 import javafx.stage.Stage;
 import javafx.util.Duration;
+import com.jorge_hugo_javier.Observer.Observer;
+import com.jorge_hugo_javier.Model.Enemigo;
 
-public class ControladorDeJuego {
+public class ControladorDeJuego implements Observer {
     @FXML
     private ProgressBar vidaJugadorBarra;
     @FXML
@@ -93,6 +95,8 @@ public class ControladorDeJuego {
         initTurnQueue();
         nextTurn();
     }
+
+    private boolean alertaMostrada = false;
     
     private void initTurnQueue() {
         List<JuegoCharacter> actores = new ArrayList<>();
@@ -161,17 +165,25 @@ public class ControladorDeJuego {
     }
 
     public void setJugador(Jugador jugador) {
+        this.jugador = jugador;
+        jugador.addObserver(this);
         System.out.println("[DEBUG] setJugador() en ControladorDeJuego ejecutado.");
         this.jugador = jugador;
     }
 
     public void setMapa(JuegoMap mapa) {
-     System.out.println("[DEBUG] setMapa() en ControladorDeJuego ejecutado.");
-     this.mapa = mapa;
-     jugador.setLimites(mapa.getGrid()[0].length, mapa.getGrid().length);
-     actualizarVista();
-     initTurnQueue();
-     nextTurn();
+        this.mapa = mapa;
+        System.out.println("[DEBUG] setMapa() en ControladorDeJuego ejecutado.");
+        this.mapa = mapa;
+        jugador.setLimites(mapa.getGrid()[0].length, mapa.getGrid().length);
+        actualizarVista();
+        initTurnQueue();
+        nextTurn();
+     for (Enemigo e : mapa.getEnemigos()) {
+        e.addObserver(this);
+    }
+        initTurnQueue();
+        nextTurn();
     }
 
     /**
@@ -721,5 +733,37 @@ private void actualizarBarrasYDatos() {
         } catch (IOException e) {
             System.err.println("Error al guardar estadísticas de victoria: " + e.getMessage());
         }
+    }
+
+    /**
+ * Recibe notificaciones de Jugador y Enemigo.
+ * event puede ser: "health", "death", "position"
+ */
+@Override
+public void update(Object subject, String event) {
+    // 1) Jugador cambia salud
+    if (subject == jugador && "health".equals(event)) {
+        Platform.runLater(this::actualizarBarrasYDatos);
+    }
+    // 2) Jugador muere
+    else if (subject == jugador && "death".equals(event)) {
+    if (!alertaMostrada) {
+        alertaMostrada = true;
+        // opcional: te das de baja para no recibir más eventos
+        jugador.removeObserver(this);
+        Platform.runLater(() -> mostrarDerrota("Has sido derrotado..."));
+    }
+    }
+    // 3) Enemigo cambia salud
+    else if (subject instanceof Enemigo && "health".equals(event)) {
+        Platform.runLater(this::actualizarBarrasYDatos);
+    }
+    // 4) Enemigo muere
+    else if (subject instanceof Enemigo && "death".equals(event)) {
+        // si ya no quedan enemigos, avanzamos/mostramos victoria
+        if (mapa.getEnemigos().stream().allMatch(Enemigo::isDead)) {
+            Platform.runLater(this::mostrarPantallaVictoria);
+        }
+    }
     }
 }

@@ -1,7 +1,42 @@
 package com.jorge_hugo_javier.Model;
 
-public class Jugador extends JuegoCharacter {
-     protected int maxHealth;
+import java.util.ArrayList;
+import java.util.List;
+
+import com.jorge_hugo_javier.Observer.Observer;
+import com.jorge_hugo_javier.Observer.Subject;
+
+public class Jugador extends JuegoCharacter implements Subject{
+    private final List<Observer> observers = new ArrayList<>();
+
+    @Override
+    public void addObserver(Observer o)   { observers.add(o); }
+    @Override
+    public void removeObserver(Observer o){ observers.remove(o); }
+    @Override
+    public void notifyObservers(String event) {
+        for (Observer o : observers) o.update(this, event);
+    }
+
+    @Override
+    public void receiveDamage(int damage) {
+        super.receiveDamage(damage);
+        notifyObservers("health");
+        if (isDead()) notifyObservers("death");
+    }
+
+    @Override
+    public void setX(int x) {
+        super.setX(x);
+        notifyObservers("position");
+    }
+    @Override
+    public void setY(int y) {
+        super.setY(y);
+        notifyObservers("position");
+    }
+ 
+    protected int maxHealth;
 
     private int defensa;
     private int velocidad;
