@@ -28,6 +28,8 @@ import java.io.*;
 import java.util.Comparator;
 import java.util.LinkedList;
 import java.util.Queue;
+import javafx.animation.PauseTransition;
+import javafx.util.Duration;
 
 public class ControladorDeJuego {
     @FXML
@@ -78,21 +80,28 @@ public class ControladorDeJuego {
     }
 
     private void nextTurn() {
-        if (turnQueue.isEmpty()) return;
-        JuegoCharacter actor = turnQueue.poll();
-        turnLabel.setText("Turno de: " + actor.getNombre());
-        if (actor instanceof Jugador) {
+    if (turnQueue.isEmpty()) return;
+    JuegoCharacter actor = turnQueue.poll();
+    turnLabel.setText("Turno de: " + actor.getNombre());
+
+    if (actor instanceof Jugador) {
             isPlayerTurn = true;
         } else {
             isPlayerTurn = false;
-            moverUnEnemigo((Enemigo) actor);
-            endTurn(actor);
+        // Damos un pequeño delay para que JavaFX pinte el label
+            PauseTransition pausa = new PauseTransition(Duration.millis(300));
+            pausa.setOnFinished(evt -> {
+                moverUnEnemigo((Enemigo) actor);
+                endTurn(actor);
+            });
+            pausa.play();
         }
     }
 
+
     private void endTurn(JuegoCharacter actor) {
         turnQueue.offer(actor);
-        nextTurn();
+        Platform.runLater(this::nextTurn);
     }
 
     public void setJugador(Jugador jugador) {
