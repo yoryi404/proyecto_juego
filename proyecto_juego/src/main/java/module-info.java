@@ -1,3 +1,8 @@
+/**
+ * @author Jorge Alegre Maestre
+ * @author Hugo Perez Muñoz
+ * @author Javier Gil Garán
+ */
 module com.jorge_hugo_javier {
     requires javafx.controls;
     requires javafx.fxml;
