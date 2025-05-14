@@ -5,6 +5,7 @@ import java.io.BufferedWriter;
 import java.io.FileWriter;
 import java.io.IOException;
 import java.io.InputStreamReader;
+import java.nio.file.Paths;
 import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
 import java.util.ArrayList;
@@ -102,9 +103,40 @@ public class ControladorDeJuego {
         turnQueue = new LinkedList<>(actores);
     }
 
+    private String nivelActual = "Nivel1.txt";
+
+    private void onNoQuedenEnemigos() {
+        if ("Nivel1.txt".equals(nivelActual)) {
+            // Pasamos al nivel 2
+            nivelActual = "Nivel2.txt";
+            cargarNuevoNivel("/com/jorge_hugo_javier/Mapa/" + nivelActual);
+        } else {
+            // Victoria final: mostramos pantalla de victoria
+            Platform.runLater(() -> {
+                try {
+                    Parent root = new FXMLLoader(
+                        getClass().getResource("/com/jorge_hugo_javier/Vistas/Victoria.fxml")
+                    ).load();
+                    Stage stage = (Stage) gridPane.getScene().getWindow();
+                    stage.setScene(new Scene(root));
+                    stage.show();
+                } catch (IOException e) {
+                    System.err.println("❌ Error al cargar Victoria.fxml: " + e.getMessage());
+                }
+            });
+        }
+    }
+
     private void nextTurn() {
-    if (turnQueue.isEmpty()) return;
+    if (turnQueue.isEmpty()) {
+            onNoQuedenEnemigos();
+            return;
+        }
     JuegoCharacter actor = turnQueue.poll();
+    if (actor.isDead()) {
+            nextTurn();
+            return;
+        }
     turnLabel.setText("Turno de: " + actor.getNombre());
 
     if (actor instanceof Jugador) {
@@ -122,7 +154,9 @@ public class ControladorDeJuego {
     }
 
     private void endTurn(JuegoCharacter actor) {
-        turnQueue.offer(actor);
+        if (!actor.isDead()) {
+            turnQueue.offer(actor);
+        }
         Platform.runLater(this::nextTurn);
     }
 
@@ -201,9 +235,8 @@ public class ControladorDeJuego {
         endTurn(jugador);
 
         if (jugador.getHealth() <= 0) {
-            guardarEstadisticasJugador(jugador);
-            irAPantallaDerrota();
-            return;
+        mostrarDerrota("Has sido derrotado por " /*nombre enemigo*/);
+        return;
         }
 
         moverEnemigos();
@@ -290,7 +323,7 @@ public class ControladorDeJuego {
                 jugador.receiveDamage(e.getAttack());
                 actualizarBarrasYDatos(); 
                 if (jugador.isDead()) {
-                    mostrarFinPartida("Has sido derrotado por " + e.getName() + "...");
+                    mostrarDerrota("Has sido derrotado por " + e.getName() + "...");
                     return;
                 }
             } else {
@@ -364,17 +397,32 @@ public class ControladorDeJuego {
         }
     }
 
-    private void mostrarFinPartida(String mensaje) {
-        Platform.runLater(() -> {
+    /**
+ * Muestra la pantalla de derrota (Derrota.fxml), igual que en nivel 1.
+ * @param mensaje Mensaje que quieras pasar (puedes ignorarlo o usarlo para el Alert previo).
+ */
+private void mostrarDerrota(final String mensaje) {
+    Platform.runLater(() -> {
+        try {
+            // Opcional: mostrar primero un Alert
             Alert alerta = new Alert(Alert.AlertType.INFORMATION);
-            alerta.setTitle("Fin del Juego");
+            alerta.setTitle("¡Has sido derrotado!");
             alerta.setHeaderText(null);
-            alerta.setContentText("⚔ " + mensaje + "\n\n¡La partida ha terminado!");
+            alerta.setContentText("⚔ " + mensaje + "\n\nLa partida ha terminado.");
             alerta.showAndWait();
 
-            // Salir o volver al menú (aquí puedes personalizar)
-            Platform.exit();
-        });
+            // Cargar la pantalla de Derrota.fxml
+            FXMLLoader loader = new FXMLLoader(
+                  getClass().getResource("/com/jorge_hugo_javier/Vistas/Derrota.fxml"));
+            Parent root = loader.load();
+            Stage stage = (Stage) gridPane.getScene().getWindow();
+            stage.setScene(new Scene(root));
+            stage.show();
+
+        } catch (IOException e) {
+            System.err.println("❌ Error al cargar Derrota.fxml: " + e.getMessage());
+        }
+    });
     }
 
     /**
@@ -431,6 +479,7 @@ public class ControladorDeJuego {
     }
 
 private void cargarNuevoNivel(String rutaArchivo) {
+    nivelActual = Paths.get(rutaArchivo).getFileName().toString();
     try (BufferedReader br = new BufferedReader(
              new InputStreamReader(getClass().getResourceAsStream(rutaArchivo)))) {
 
