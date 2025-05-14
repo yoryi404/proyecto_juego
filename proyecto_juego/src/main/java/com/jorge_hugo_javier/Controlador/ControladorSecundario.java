@@ -1,3 +1,8 @@
+/**
+ * @author Jorge Alegre Maestre
+ * @author Hugo Perez Muñoz
+ * @author Javier Gil Garán
+ */
 package com.jorge_hugo_javier.Controlador;
 
 import javafx.fxml.FXML;
@@ -10,15 +15,21 @@ import javafx.event.ActionEvent;
 
 import java.io.IOException;
 
+/**
+ * Controlador de la pantalla secundaria que permite cambiar a la creación de
+ * personaje.
+ */
 public class ControladorSecundario {
 
     /**
-     * Este método cambia la escena actual y carga CreacionPersonaje.fxml
-     * Vamos desde el boon Ir a creacion de personaje"
+     * Cambia a la vista de creación de personaje al recibir un evento de acción.
+     * @param event Evento que dispara el cambio de escena.
+     * @throws IOException Si ocurre un error al cargar el archivo FXML.
      */
     @FXML
     private void switchToCreacionPersonaje(ActionEvent event) throws IOException {
-        FXMLLoader loader = new FXMLLoader(getClass().getResource("/com/jorge_hugo_javier/Vistas/CreacionPersonaje.fxml"));
+        FXMLLoader loader = new FXMLLoader(
+                getClass().getResource("/com/jorge_hugo_javier/Vistas/CreacionPersonaje.fxml"));
         Parent root = loader.load();
 
         // Obtener la ventana actual desde el evento

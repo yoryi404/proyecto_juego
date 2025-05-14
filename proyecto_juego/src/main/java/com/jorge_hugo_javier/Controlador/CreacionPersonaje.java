@@ -1,3 +1,8 @@
+/**
+ * @author Jorge Alegre Maestre
+ * @author Hugo Perez Muñoz
+ * @author Javier Gil Garán
+ */
 package com.jorge_hugo_javier.Controlador;
 
 import javafx.fxml.FXML;
