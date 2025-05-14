@@ -25,6 +25,9 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Random;
 import java.io.*;
+import java.util.Comparator;
+import java.util.LinkedList;
+import java.util.Queue;
 
 public class ControladorDeJuego {
     @FXML
@@ -43,7 +46,10 @@ public class ControladorDeJuego {
     private GridPane gridPane;
 
     @FXML
-    private Label labelVida;
+    private Label labelVidaTexto;
+
+    @FXML
+    private Label labelVidaJugador;
 
     @FXML
     private Label labelNombre;
@@ -60,22 +66,59 @@ public class ControladorDeJuego {
     private Jugador jugador;
     private JuegoMap mapa;
 
+    @FXML
+    private Label turnLabel;        // Para mostrar quién actúa
+    private Queue<JuegoCharacter> turnQueue;
+    private boolean isPlayerTurn;   // Para saber si toca al jugador
+    
+    private void initTurnQueue() {
+        List<JuegoCharacter> actores = new ArrayList<>();
+        actores.add(jugador);
+        actores.addAll(mapa.getEnemigos());
+        // Orden descendente por velocidad
+        actores.sort(Comparator.comparingInt(JuegoCharacter::getVelocidad).reversed());
+        turnQueue = new LinkedList<>(actores);
+    }
+
+    private void nextTurn() {
+        if (turnQueue.isEmpty()) return;
+        JuegoCharacter actor = turnQueue.poll();
+        turnLabel.setText("Turno de: " + actor.getNombre());
+        if (actor instanceof Jugador) {
+            isPlayerTurn = true;
+        } else {
+            isPlayerTurn = false;
+            moverUnEnemigo((Enemigo) actor);
+            endTurn(actor);
+        }
+    }
+
+    private void endTurn(JuegoCharacter actor) {
+        turnQueue.offer(actor);
+        nextTurn();
+    }
+
     public void setJugador(Jugador jugador) {
         System.out.println("[DEBUG] setJugador() en ControladorDeJuego ejecutado.");
         this.jugador = jugador;
     }
 
     public void setMapa(JuegoMap mapa) {
-        System.out.println("[DEBUG] setMapa() en ControladorDeJuego ejecutado.");
-        this.mapa = mapa;
-        jugador.setLimites(mapa.getGrid()[0].length, mapa.getGrid().length);
-        actualizarVista();
+     System.out.println("[DEBUG] setMapa() en ControladorDeJuego ejecutado.");
+     this.mapa = mapa;
+     jugador.setLimites(mapa.getGrid()[0].length, mapa.getGrid().length);
+     actualizarVista();
+     initTurnQueue();
+     nextTurn();
     }
 
     /**
      * Manejo de teclado: W A S D para moverse y atacar.
      */
+    @FXML
     public void manejarTeclado(KeyEvent evento) {
+        System.out.println("[DEBUG] tecla pulsada: " + evento.getCode());
+        if (!isPlayerTurn) return;
         if (jugador.isDead()) {
             return; // No puede moverse si está muerto
         }
@@ -118,6 +161,8 @@ public class ControladorDeJuego {
         }
 
         actualizarVista();
+        isPlayerTurn = false;
+        endTurn(jugador);
 
         if (jugador.getHealth() <= 0) {
             guardarEstadisticasJugador(jugador);
@@ -224,6 +269,18 @@ public class ControladorDeJuego {
         if (todosLosEnemigosDerrotados()) {
             mostrarPantallaVictoria();
         }
+    }
+
+    private void moverUnEnemigo(Enemigo e) {
+        // Copia tu lógica de un enemigo, p.ej.:
+        if (estanAdyacentes(e, jugador)) {
+            jugador.receiveDamage(e.getAttack());
+        } else if (estaEnRango3x3(e)) {
+            e.moverHacia(jugador.getX(), jugador.getY(), mapa);
+        } else {
+            moverAleatorio(e);
+        }
+        actualizarVista();
     }
 
     // 🆕 Verifica si el jugador está en un área de 3x3 alrededor del enemigo
@@ -405,8 +462,10 @@ public class ControladorDeJuego {
         }
 
         // Actualizar la vida del jugador en pantalla
-        if (labelVida != null)
-            labelVida.setText("Vida: " + jugador.getHealth());
+        if (labelVidaTexto!= null)
+            labelVidaTexto.setText("Vida: " + jugador.getHealth());
+        if (labelVidaJugador != null) 
+            labelVidaJugador.setText("Salud: " + jugador.getHealth());
         if (labelNombre != null)
             labelNombre.setText("Nombre: " + jugador.getNombre());
         if (labelFuerza != null)
