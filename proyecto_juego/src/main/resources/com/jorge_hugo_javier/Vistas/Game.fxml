@@ -7,7 +7,7 @@
 <BorderPane xmlns="http://javafx.com/javafx/8" xmlns:fx="http://javafx.com/fxml/1"
             fx:controller="com.jorge_hugo_javier.Controlador.ControladorDeJuego">
 
-    <!-- ✅ BARRAS DE VIDA -->
+    <!-- BARRAS DE VIDA EN LA PARTE SUPERIOR -->
     <top>
         <HBox spacing="40.0" alignment="CENTER" BorderPane.alignment="CENTER">
             <children>
@@ -27,35 +27,30 @@
         </HBox>
     </top>
 
-    <!-- ✅ ZONA DE JUEGO -->
-    <center>
-        <GridPane fx:id="gridPane" prefWidth="800.0" prefHeight="600.0" BorderPane.alignment="CENTER" />
-    </center>
-
-    <!-- ✅ VIDA DEL JUGADOR EN TEXTO -->
-    <bottom>
-        <Label fx:id="labelVida" text="Vida: " BorderPane.alignment="CENTER" />
-    </bottom>
-
-    <!-- ✅ ESTADÍSTICAS DEL JUGADOR -->
+    <!-- INFORMACIÓN DEL JUGADOR Y ENEMIGO EN LA IZQUIERDA -->
     <left>
         <VBox spacing="10.0" style="-fx-padding: 20;" BorderPane.alignment="CENTER">
-            <Label fx:id="labelNombre" text="Nombre: " />
-            <Label fx:id="labelVida" text="Salud: " />
-            <Label fx:id="labelFuerza" text="Fuerza: " />
-            <Label fx:id="labelDefensa" text="Defensa: " />
-            <Label fx:id="labelVelocidad" text="Velocidad: " />
+            <children>
+                <Label fx:id="labelNombre" text="Nombre: " />
+                <Label fx:id="labelVidaTexto" text="Salud: " />
+                <Label fx:id="labelFuerza" text="Fuerza: " />
+                <Label fx:id="labelDefensa" text="Defensa: " />
+                <Label fx:id="labelVelocidad" text="Velocidad: " />
 
-            <Label text="Estadísticas Enemigo:" style="-fx-font-weight: bold; -fx-padding: 10 0 0 0;"/>
-            <Label fx:id="labelNombreEnemigo" text="Nombre Enemigo: " />
-            <Label fx:id="labelVidaEnemigo" text="Vida Enemigo: " />
+                <Label text="Estadísticas Enemigo:" style="-fx-font-weight: bold; -fx-padding: 10 0 0 0;"/>
+                <Label fx:id="labelNombreEnemigo" text="Nombre Enemigo: " />
+                <Label fx:id="labelVidaEnemigo" text="Vida Enemigo: " />
+                <Label fx:id="labelFuerzaEnemigo" text="Fuerza Enemigo: " />
+            </children>
         </VBox>
     </left>
 
-    <!-- Mapa del juego -->
+    <!-- MAPA DEL JUEGO EN EL CENTRO DENTRO DE UN SCROLLPANE -->
     <center>
-        <ScrollPane fitToHeight="true" fitToWidth="true">
-            <GridPane fx:id="gridPane" prefWidth="800.0" prefHeight="600.0" />
+        <ScrollPane fitToHeight="true" fitToWidth="true" BorderPane.alignment="CENTER">
+            <content>
+                <GridPane fx:id="gridPane" prefWidth="800.0" prefHeight="600.0" />
+            </content>
         </ScrollPane>
     </center>
 </BorderPane>

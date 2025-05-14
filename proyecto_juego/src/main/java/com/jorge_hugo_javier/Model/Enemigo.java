@@ -1,6 +1,7 @@
 package com.jorge_hugo_javier.Model;
 
 public class Enemigo extends JuegoCharacter {
+    protected int maxHealth;
 
     public Enemigo(String name, int health, int attack, int x, int y) {
         super(name, health, attack, x, y);
@@ -53,8 +54,14 @@ public class Enemigo extends JuegoCharacter {
      * Comprueba si la celda a la que quiere moverse es válida.
      */
     private boolean puedeMoverA(int x, int y, JuegoMap mapa) {
-        if (!mapa.isInsideBounds(x, y)) return false;
+        if (!mapa.isInsideBounds(x, y))
+            return false;
         Cell celda = mapa.getCell(x, y);
         return celda.isWalkable() && (celda.getOccupant() == null || celda.getOccupant().isDead());
     }
+
+    public int getMaxHealth() {
+        return 100;
+    }
+
 }

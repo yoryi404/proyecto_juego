@@ -1,6 +1,7 @@
 package com.jorge_hugo_javier.Model;
 
 public class Jugador extends JuegoCharacter {
+     protected int maxHealth;
 
     private int defensa;
     private int velocidad;
@@ -96,5 +97,9 @@ public class Jugador extends JuegoCharacter {
                 ", x=" + x +
                 ", y=" + y +
                 '}';
+    }
+
+    public int getMaxHealth() {
+        return 100;
     }
 }

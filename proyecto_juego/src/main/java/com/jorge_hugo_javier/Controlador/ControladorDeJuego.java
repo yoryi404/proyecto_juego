@@ -8,6 +8,7 @@ import com.jorge_hugo_javier.Model.Jugador;
 import javafx.fxml.FXML;
 import javafx.fxml.FXMLLoader;
 import javafx.scene.control.Label;
+import javafx.scene.control.ProgressBar;
 import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
 import javafx.scene.input.KeyEvent;
@@ -25,9 +26,19 @@ import java.util.List;
 import java.util.Random;
 import java.io.*;
 
-
 public class ControladorDeJuego {
-
+    @FXML
+    private ProgressBar vidaJugadorBarra;
+    @FXML
+    private ProgressBar vidaEnemigoBarra;
+    @FXML
+    private Label labelVidaTexto;
+    @FXML
+    private Label labelNombreEnemigo;
+    @FXML
+    private Label labelVidaEnemigo;
+    @FXML
+    private Label labelFuerzaEnemigo;
     @FXML
     private GridPane gridPane;
 
@@ -62,7 +73,7 @@ public class ControladorDeJuego {
     }
 
     /**
-     * Manejo de teclado: W A S D para moverse, SPACE para atacar
+     * Manejo de teclado: W A S D para moverse y atacar.
      */
     public void manejarTeclado(KeyEvent evento) {
         if (jugador.isDead()) {
@@ -117,7 +128,7 @@ public class ControladorDeJuego {
         moverEnemigos();
 
         if (jugador.isDead()) {
-            System.out.println("☠ El jugador ha muerto.");
+            System.out.println("El jugador ha muerto.");
             guardarEstadisticasYMostrarPantallaDerrota();
         }
     }
@@ -146,7 +157,7 @@ public class ControladorDeJuego {
                 stage.setScene(new Scene(root));
                 stage.show();
             } catch (IOException e) {
-                System.err.println("❌ Error al cargar la pantalla de derrota: " + e.getMessage());
+                System.err.println("Error al cargar la pantalla de derrota: " + e.getMessage());
             }
         });
     }
@@ -191,20 +202,21 @@ public class ControladorDeJuego {
      */
     private void moverEnemigos() {
         for (Enemigo e : mapa.getEnemigos()) {
-            if (e.isDead()) continue;
+            if (e.isDead())
+                continue;
 
             if (estanAdyacentes(e, jugador)) {
                 jugador.receiveDamage(e.getAttack());
+                actualizarBarrasYDatos(); 
                 if (jugador.isDead()) {
                     mostrarFinPartida("Has sido derrotado por " + e.getName() + "...");
                     return;
                 }
             } else {
-                // 🆕 Si el jugador está dentro del rango 3x3, el enemigo lo persigue
                 if (estaEnRango3x3(e)) {
                     e.moverHacia(jugador.getX(), jugador.getY(), mapa);
                 } else {
-                    moverAleatorio(e); // 🆕 Movimiento aleatorio si está lejos
+                    moverAleatorio(e);
                 }
             }
         }
@@ -224,7 +236,7 @@ public class ControladorDeJuego {
     // 🆕 Mueve al enemigo a una celda adyacente aleatoria válida
     private void moverAleatorio(Enemigo enemigo) {
         Random rand = new Random();
-        int[][] dirs = {{1,0},{-1,0},{0,1},{0,-1}};
+        int[][] dirs = { { 1, 0 }, { -1, 0 }, { 0, 1 }, { 0, -1 } };
         List<int[]> opciones = new ArrayList<>();
 
         for (int[] dir : dirs) {
@@ -246,7 +258,6 @@ public class ControladorDeJuego {
             enemigo.setY(nuevoY);
             mapa.getCell(nuevoX, nuevoY).setOccupant(enemigo);
         }
-    
 
         boolean todosMuertos = mapa.getEnemigos().stream().allMatch(Enemigo::isDead);
         if (todosMuertos) {
@@ -274,6 +285,7 @@ public class ControladorDeJuego {
         for (Enemigo enemigo : mapa.getEnemigos()) {
             if (!enemigo.isDead() && estanAdyacentes(jugador, enemigo)) {
                 enemigo.receiveDamage(jugador.getAttack());
+                actualizarBarrasYDatos(); 
                 System.out.println("Atacaste a " + enemigo.getName() + ", vida restante: " + enemigo.getHealth());
 
                 if (enemigo.isDead()) {
@@ -295,19 +307,17 @@ public class ControladorDeJuego {
     }
 
     private void mostrarPantallaVictoria() {
-    try {
-        FXMLLoader loader = new FXMLLoader(getClass().getResource("/com/jorge_hugo_javier/Vistas/Victoria.fxml"));
-        Parent root = loader.load();
-        Stage stage = (Stage) gridPane.getScene().getWindow();
-        stage.setScene(new Scene(root));
-        stage.show();
-        System.out.println("✅ Se ha mostrado la pantalla de victoria.");
-    } catch (IOException e) {
-        System.err.println("❌ Error al cargar la pantalla de victoria: " + e.getMessage());
+        try {
+            FXMLLoader loader = new FXMLLoader(getClass().getResource("/com/jorge_hugo_javier/Vistas/Victoria.fxml"));
+            Parent root = loader.load();
+            Stage stage = (Stage) gridPane.getScene().getWindow();
+            stage.setScene(new Scene(root));
+            stage.show();
+            System.out.println("✅ Se ha mostrado la pantalla de victoria.");
+        } catch (IOException e) {
+            System.err.println("Error al cargar la pantalla de victoria: " + e.getMessage());
+        }
     }
-    }
-
-
 
     /**
      * 
@@ -348,7 +358,7 @@ public class ControladorDeJuego {
         boolean todosMuertos = mapa.getEnemigos().stream().allMatch(e -> !e.isAlive());
 
         if (todosMuertos) {
-            System.out.println("🎉 ¡Has derrotado a todos los enemigos!");
+            System.out.println("¡Has derrotado a todos los enemigos!");
 
             mostrarPantallaVictoria();
 
@@ -363,47 +373,34 @@ public class ControladorDeJuego {
         gridPane.getChildren().clear();
         char[][] celdas = mapa.getMapaChar();
 
-        for (int fila = 0; fila < celdas.length; fila++) {
-            for (int col = 0; col < celdas[fila].length; col++) {
+        for (int y = 0; y < celdas.length; y++) {
+            for (int x = 0; x < celdas[y].length; x++) {
                 StackPane panel = new StackPane();
                 panel.setPrefSize(40, 40);
+                String imgPath = (celdas[y][x] == '#') ? "/com/jorge_hugo_javier/Vistas/Pared.jpg" : "/com/jorge_hugo_javier/Vistas/Suelo.png";
 
-                // Fondo según la celda
-                String imagePath = (celdas[fila][col] == '#')
-                        ? "/com/jorge_hugo_javier/Vistas/Pared.jpg"
-                        : "/com/jorge_hugo_javier/Vistas/Suelo.png";
-
-                ImageView fondo = new ImageView(new Image(getClass().getResourceAsStream(imagePath)));
+                ImageView fondo = new ImageView(new Image(getClass().getResourceAsStream(imgPath)));
                 fondo.setFitWidth(40);
                 fondo.setFitHeight(40);
                 panel.getChildren().add(fondo);
 
-                // Dibujar jugador
-                if (jugador.getY() == fila && jugador.getX() == col) {
-                    ImageView imgJugador = new ImageView(new Image(
-                            getClass().getResourceAsStream("/com/jorge_hugo_javier/Vistas/Jugador.jpg")));
-                    imgJugador.setFitWidth(35);
-                    imgJugador.setFitHeight(35);
-                    panel.getChildren().add(imgJugador);
+                if (jugador.getY() == y && jugador.getX() == x) {
+                    ImageView jugadorImg = new ImageView(new Image(getClass().getResourceAsStream("/com/jorge_hugo_javier/Vistas/Jugador.jpg")));
+                    jugadorImg.setFitWidth(35);
+                    jugadorImg.setFitHeight(35);
+                    panel.getChildren().add(jugadorImg);
                 }
 
-                // Dibujar enemigos
                 for (Enemigo enemigo : mapa.getEnemigos()) {
-                    if (!enemigo.isDead() && enemigo.getY() == fila && enemigo.getX() == col) {
-                        ImageView imgEnemigo = new ImageView(new Image(
-                                getClass().getResourceAsStream("/com/jorge_hugo_javier/Vistas/Enemigo.jpg")));
-                        imgEnemigo.setFitWidth(35);
-                        imgEnemigo.setFitHeight(35);
-                        panel.getChildren().add(imgEnemigo);
+                    if (!enemigo.isDead() && enemigo.getX() == x && enemigo.getY() == y) {
+                        ImageView enemigoImg = new ImageView(new Image(getClass().getResourceAsStream("/com/jorge_hugo_javier/Vistas/Enemigo.jpg")));
+                        enemigoImg.setFitWidth(35);
+                        enemigoImg.setFitHeight(35);
+                        panel.getChildren().add(enemigoImg);
                     }
                 }
 
-                if (todosLosEnemigosDerrotados()) {
-                    guardarEstadisticasVictoria();
-                    mostrarPantallaVictoria();
-                }
-
-                gridPane.add(panel, col, fila);
+                gridPane.add(panel, x, y);
             }
         }
 
@@ -418,7 +415,42 @@ public class ControladorDeJuego {
             labelDefensa.setText("Defensa: " + jugador.getDefensa());
         if (labelVelocidad != null)
             labelVelocidad.setText("Velocidad: " + jugador.getVelocidad());
+            actualizarBarrasYDatos(); 
     }
+private void actualizarBarrasYDatos() {
+          if (vidaJugadorBarra != null) {
+        double progresoJugador = Math.max(0.0, Math.min(1.0, (double) jugador.getHealth() / jugador.getMaxHealth()));
+        vidaJugadorBarra.setProgress(progresoJugador);
+    }
+
+        if (labelVidaTexto != null)
+            labelVidaTexto.setText("Salud: " + jugador.getHealth());
+
+        Enemigo enemigo = mapa.getEnemigos().stream().filter(e -> !e.isDead()).findFirst().orElse(null);
+
+         if (enemigo != null && vidaEnemigoBarra != null) {
+        double progresoEnemigo = Math.max(0.0, Math.min(1.0, (double) enemigo.getHealth() / enemigo.getMaxHealth()));
+        vidaEnemigoBarra.setProgress(progresoEnemigo);
+        
+            if (labelNombreEnemigo != null) labelNombreEnemigo.setText("Nombre Enemigo: " + enemigo.getName());
+            if (labelVidaEnemigo != null) labelVidaEnemigo.setText("Vida Enemigo: " + enemigo.getHealth());
+            if (labelFuerzaEnemigo != null) labelFuerzaEnemigo.setText("Fuerza Enemigo: " + enemigo.getAttack());
+        } else {
+            if (vidaEnemigoBarra != null) vidaEnemigoBarra.setProgress(0);
+            if (labelNombreEnemigo != null) labelNombreEnemigo.setText("Nombre Enemigo: --");
+            if (labelVidaEnemigo != null) labelVidaEnemigo.setText("Vida Enemigo: --");
+            if (labelFuerzaEnemigo != null) labelFuerzaEnemigo.setText("Fuerza Enemigo: --");
+        }
+
+        // Estadísticas del jugador
+        if (labelVida != null) labelVida.setText("Vida: " + jugador.getHealth());
+        if (labelNombre != null) labelNombre.setText("Nombre: " + jugador.getNombre());
+        if (labelFuerza != null) labelFuerza.setText("Fuerza: " + jugador.getFuerza());
+        if (labelDefensa != null) labelDefensa.setText("Defensa: " + jugador.getDefensa());
+        if (labelVelocidad != null) labelVelocidad.setText("Velocidad: " + jugador.getVelocidad());
+    }
+
+   
 
     private void irAPantallaDerrota() {
         try {
@@ -432,7 +464,7 @@ public class ControladorDeJuego {
             stage.setScene(scene);
             stage.show();
         } catch (IOException e) {
-            System.err.println("❌ Error al cargar la pantalla de derrota: " + e.getMessage());
+            System.err.println("Error al cargar la pantalla de derrota: " + e.getMessage());
         }
     }
 
@@ -444,7 +476,7 @@ public class ControladorDeJuego {
             LocalDateTime ahora = LocalDateTime.now();
             DateTimeFormatter formato = DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss");
 
-            writer.write("🕒 " + ahora.format(formato));
+            writer.write("Tiempo: " + ahora.format(formato));
             writer.newLine();
             writer.write("→ Nombre: " + jugador.getNombre());
             writer.newLine();
@@ -457,28 +489,28 @@ public class ControladorDeJuego {
             writer.newLine();
 
             writer.close();
-            System.out.println("[✔] Estadísticas guardadas correctamente.");
+            System.out.println("Estadísticas guardadas correctamente.");
         } catch (IOException e) {
-            System.err.println("❌ Error al guardar estadísticas: " + e.getMessage());
+            System.err.println("Error al guardar estadísticas: " + e.getMessage());
         }
     }
 
     private void guardarEstadisticasVictoria() {
-    String ruta = "src/main/resources/com/jorge_hugo_javier/Estadisticas/estadisticas.txt";
+        String ruta = "src/main/resources/com/jorge_hugo_javier/Estadisticas/estadisticas.txt";
 
-    String linea = jugador.getNombre() + " | Salud final: " + jugador.getHealth() +
-                   " | Fuerza: " + jugador.getAttack() +
-                   " | Defensa: " + jugador.getDefensa() +
-                   " | Velocidad: " + jugador.getVelocidad() +
-                   " | Resultado: VICTORIA";
+        String linea = jugador.getNombre() + " | Salud final: " + jugador.getHealth() +
+                " | Fuerza: " + jugador.getAttack() +
+                " | Defensa: " + jugador.getDefensa() +
+                " | Velocidad: " + jugador.getVelocidad() +
+                " | Resultado: VICTORIA";
 
-    try {
-        java.nio.file.Files.write(java.nio.file.Paths.get(ruta),
-                (linea + System.lineSeparator()).getBytes(), java.nio.file.StandardOpenOption.CREATE,
-                java.nio.file.StandardOpenOption.APPEND);
-        System.out.println("✅ Estadísticas de victoria guardadas.");
-    } catch (IOException e) {
-        System.err.println("❌ Error al guardar estadísticas de victoria: " + e.getMessage());
+        try {
+            java.nio.file.Files.write(java.nio.file.Paths.get(ruta),
+                    (linea + System.lineSeparator()).getBytes(), java.nio.file.StandardOpenOption.CREATE,
+                    java.nio.file.StandardOpenOption.APPEND);
+            System.out.println("Estadísticas de victoria guardadas.");
+        } catch (IOException e) {
+            System.err.println("Error al guardar estadísticas de victoria: " + e.getMessage());
+        }
     }
-}
 }
