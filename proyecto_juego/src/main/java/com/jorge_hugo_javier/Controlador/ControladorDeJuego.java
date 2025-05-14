@@ -35,7 +35,10 @@ public class ControladorDeJuego {
     private GridPane gridPane;
 
     @FXML
-    private Label labelVida;
+    private Label labelVidaTexto;
+
+    @FXML
+    private Label labelVidaJugador;
 
     @FXML
     private Label labelNombre;
@@ -90,17 +93,19 @@ public class ControladorDeJuego {
     }
 
     public void setMapa(JuegoMap mapa) {
-        System.out.println("[DEBUG] setMapa() en ControladorDeJuego ejecutado.");
-        this.mapa = mapa;
-        jugador.setLimites(mapa.getGrid()[0].length, mapa.getGrid().length);
-        actualizarVista();
+     System.out.println("[DEBUG] setMapa() en ControladorDeJuego ejecutado.");
+     this.mapa = mapa;
+     jugador.setLimites(mapa.getGrid()[0].length, mapa.getGrid().length);
+     actualizarVista();
+     initTurnQueue();
+     nextTurn();
     }
 
     /**
      * Manejo de teclado: W A S D para moverse, SPACE para atacar
      */
     @FXML
-    private void manejarTeclado(KeyEvent evento) {
+    public void manejarTeclado(KeyEvent evento) {
         System.out.println("[DEBUG] tecla pulsada: " + evento.getCode());
         if (!isPlayerTurn) return;
         if (jugador.isDead()) {
@@ -460,8 +465,10 @@ public class ControladorDeJuego {
         }
 
         // Actualizar la vida del jugador en pantalla
-        if (labelVida != null)
-            labelVida.setText("Vida: " + jugador.getHealth());
+        if (labelVidaTexto!= null)
+            labelVidaTexto.setText("Vida: " + jugador.getHealth());
+        if (labelVidaJugador != null) 
+            labelVidaJugador.setText("Salud: " + jugador.getHealth());
         if (labelNombre != null)
             labelNombre.setText("Nombre: " + jugador.getNombre());
         if (labelFuerza != null)
