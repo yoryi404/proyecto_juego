@@ -185,6 +185,13 @@ public class ControladorPrincipal {
                                     .add(createImageView("/com/jorge_hugo_javier/Vistas/jugador.jpg", 35, 35));
                         }
                         break;
+                    case '^':
+                        panel.getChildren().add(createImageView("/com/jorge_hugo_javier/Vistas/icon.jpg"));
+                        if (fila == jugador.getY() && col == jugador.getX()) {
+                            panel.getChildren()
+                                    .add(createImageView("/com/jorge_hugo_javier/Vistas/icon.png", 35, 35));
+                        }
+                        break;
                     default:
                         panel.setStyle("-fx-background-color: red;");
                 }

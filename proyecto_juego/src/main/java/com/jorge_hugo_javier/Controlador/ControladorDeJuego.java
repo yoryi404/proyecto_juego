@@ -1,4 +1,4 @@
-/**
+/*	
  * @author Jorge Alegre Maestre
  * @author Hugo Perez Muñoz
  * @author Javier Gil Garán
@@ -311,7 +311,10 @@ public class ControladorDeJuego implements Observer {
             // Ocupa la nueva celda
             mapa.getCell(newX, newY).setOccupant(jugador);
         }
-
+        if (celdaDestino.getType() == Cell.Type.TRAP) {
+            jugador.receiveDamage(5);
+            System.out.println(" El jugador ha pisado una trampa y ha recibido 5 de daño!");
+        }
         actualizarVista();
         isPlayerTurn = false;
         endTurn(jugador);
@@ -703,8 +706,15 @@ public class ControladorDeJuego implements Observer {
             for (int x = 0; x < celdas[y].length; x++) {
                 StackPane panel = new StackPane();
                 panel.setPrefSize(40, 40);
-                String imgPath = (celdas[y][x] == '#') ? "/com/jorge_hugo_javier/Vistas/Pared.jpg"
-                        : "/com/jorge_hugo_javier/Vistas/Suelo.png";
+
+                String imgPath;
+                if (celdas[y][x] == '#') {
+                    imgPath = "/com/jorge_hugo_javier/Vistas/Pared.jpg";
+                } else if (celdas[y][x] == '^') {
+                    imgPath = "/com/jorge_hugo_javier/Vistas/Trampa.png"; 
+                } else {
+                    imgPath = "/com/jorge_hugo_javier/Vistas/Suelo.png";
+                }
 
                 ImageView fondo = new ImageView(new Image(getClass().getResourceAsStream(imgPath)));
                 fondo.setFitWidth(40);
