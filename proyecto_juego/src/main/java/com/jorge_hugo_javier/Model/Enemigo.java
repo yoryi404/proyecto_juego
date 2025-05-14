@@ -24,27 +24,33 @@ public class Enemigo extends JuegoCharacter {
     }
 
     /**
-     * Mueve al enemigo una celda en dirección al jugador, si es posible.
-     */
+ * Mueve al enemigo en dirección al jugador, respetando muros y ocupantes.
+ *
+ * @param xJugador  Coordenada X del jugador
+ * @param yJugador  Coordenada Y del jugador
+ * @param mapa      El mapa del juego, con esPosicionValida(x,y)
+ */
     public void moverHacia(int xJugador, int yJugador, JuegoMap mapa) {
+        // Calcula hacia dónde habría que moverse en X y en Y
         int dx = Integer.compare(xJugador, this.getX());
         int dy = Integer.compare(yJugador, this.getY());
 
-        // Prioridad en X
+    // 1) Intentar mover en X si dx != 0
         if (dx != 0) {
             int nuevoX = this.getX() + dx;
             int nuevoY = this.getY();
-            if (puedeMoverA(nuevoX, nuevoY, mapa)) {
+            // Solo movemos si la celda destino es válida
+            if (mapa.esPosicionValida(nuevoX, nuevoY)) {
                 moveTo(nuevoX, nuevoY, mapa);
-                return;
+                return;  // terminamos el turno tras moverse
             }
         }
 
-        // Luego intenta Y
+    // 2) Si no pudo en X, intentar en Y si dy != 0
         if (dy != 0) {
             int nuevoX = this.getX();
             int nuevoY = this.getY() + dy;
-            if (puedeMoverA(nuevoX, nuevoY, mapa)) {
+            if (mapa.esPosicionValida(nuevoX, nuevoY)) {
                 moveTo(nuevoX, nuevoY, mapa);
             }
         }

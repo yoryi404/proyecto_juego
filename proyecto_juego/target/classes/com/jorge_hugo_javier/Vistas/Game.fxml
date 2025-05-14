@@ -3,9 +3,10 @@
 <?import javafx.scene.control.*?>
 <?import javafx.scene.image.ImageView?>
 
-<BorderPane xmlns="http://javafx.com/javafx/8"
+<BorderPane fx:id="rootPane" xmlns="http://javafx.com/javafx/8"
             xmlns:fx="http://javafx.com/fxml/1"
-            fx:controller="com.jorge_hugo_javier.Controlador.ControladorDeJuego">
+            fx:controller="com.jorge_hugo_javier.Controlador.ControladorDeJuego"
+            focusTraversable="true">
 
     <!-- BARRA SUPERIOR: vida y turno -->
     <top>
@@ -27,6 +28,10 @@
                              prefWidth="300.0"
                              progress="1.0" />
             </VBox>
+            <!-- ► Boton nivel 2 -->
+            <Button fx:id="btnNivel2"
+              text="Nivel 2"
+              onAction="#cargarNivel2"/>
         </HBox>
     </top>
 

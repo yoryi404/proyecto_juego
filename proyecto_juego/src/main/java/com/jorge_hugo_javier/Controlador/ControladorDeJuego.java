@@ -1,12 +1,34 @@
 package com.jorge_hugo_javier.Controlador;
 
+import java.io.BufferedReader;
+import java.io.BufferedWriter;
+import java.io.FileWriter;
+import java.io.IOException;
+import java.io.InputStreamReader;
+import java.time.LocalDateTime;
+import java.time.format.DateTimeFormatter;
+import java.util.ArrayList;
+import java.util.Comparator;
+import java.util.LinkedList;
+import java.util.List;
+import java.util.Queue;
+import java.util.Random;
+
 import com.jorge_hugo_javier.Model.Cell;
 import com.jorge_hugo_javier.Model.Enemigo;
 import com.jorge_hugo_javier.Model.JuegoCharacter;
 import com.jorge_hugo_javier.Model.JuegoMap;
 import com.jorge_hugo_javier.Model.Jugador;
+
+import javafx.animation.PauseTransition;
+import javafx.application.Platform;
+import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
 import javafx.fxml.FXMLLoader;
+import javafx.scene.Parent;
+import javafx.scene.Scene;
+import javafx.scene.control.Alert;
+import javafx.scene.control.Button;
 import javafx.scene.control.Label;
 import javafx.scene.control.ProgressBar;
 import javafx.scene.image.Image;
@@ -15,20 +37,6 @@ import javafx.scene.input.KeyEvent;
 import javafx.scene.layout.GridPane;
 import javafx.scene.layout.StackPane;
 import javafx.stage.Stage;
-import javafx.scene.Parent;
-import javafx.scene.Scene;
-import javafx.scene.control.Alert;
-import javafx.application.Platform;
-import java.time.LocalDateTime;
-import java.time.format.DateTimeFormatter;
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Random;
-import java.io.*;
-import java.util.Comparator;
-import java.util.LinkedList;
-import java.util.Queue;
-import javafx.animation.PauseTransition;
 import javafx.util.Duration;
 
 public class ControladorDeJuego {
@@ -69,6 +77,21 @@ public class ControladorDeJuego {
     private Label turnLabel;        // Para mostrar quién actúa
     private Queue<JuegoCharacter> turnQueue;
     private boolean isPlayerTurn;   // Para saber si toca al jugador
+
+    @FXML private Button btnNivel2;
+
+    @FXML
+    private void cargarNivel2(ActionEvent event) {
+        // Ruta a tu fichero Nivel2.txt en resources
+        String rutaNivel2 = "/com/jorge_hugo_javier/Mapa/Nivel2.txt";
+
+        // Reutilizamos tu método para cargar un nuevo nivel:
+        cargarNuevoNivel(rutaNivel2);
+
+        // Reiniciamos la cola de turnos para este nuevo nivel
+        initTurnQueue();
+        nextTurn();
+    }
     
     private void initTurnQueue() {
         List<JuegoCharacter> actores = new ArrayList<>();
@@ -97,7 +120,6 @@ public class ControladorDeJuego {
             pausa.play();
         }
     }
-
 
     private void endTurn(JuegoCharacter actor) {
         turnQueue.offer(actor);
@@ -151,20 +173,28 @@ public class ControladorDeJuego {
         int newX = jugador.getX() + dx;
         int newY = jugador.getY() + dy;
 
-        if (mapa.isInsideBounds(newX, newY)) {
-            Cell celdaDestino = mapa.getCell(newX, newY);
-            JuegoCharacter objetivo = celdaDestino.getOccupant();
 
-            if (objetivo instanceof Enemigo && objetivo.isAlive()) {
-                Enemigo enemigo = (Enemigo) objetivo;
-                int daño = jugador.getAttack();
-                enemigo.receiveDamage(daño);
-                System.out.println("Atacaste a " + enemigo.getName() + ", vida restante: " + enemigo.getHealth());
-            } else if (celdaDestino.isWalkable()) {
-                jugador.setX(newX);
-                jugador.setY(newY);
-            }
-        }
+    Cell celdaDestino = mapa.getCell(newX, newY);
+    JuegoCharacter objetivo = celdaDestino.getOccupant();
+
+    if (objetivo instanceof Enemigo && objetivo.isAlive()) {
+        // Si hay un enemigo vivo, atacamos
+        Enemigo enemigo = (Enemigo) objetivo;
+        int daño = jugador.getAttack();
+        enemigo.receiveDamage(daño);
+        System.out.println("Atacaste a " + enemigo.getName() +
+                       ", vida restante: " + enemigo.getHealth());
+    } 
+    // Solo si es una celda válida (suelo, dentro de límites y sin ocupante)
+    else if (mapa.esPosicionValida(newX, newY)) {
+        // Desocupa la celda actual del jugador
+        mapa.getCell(jugador.getX(), jugador.getY()).setOccupant(null);
+        // Mueve al jugador
+        jugador.setX(newX);
+        jugador.setY(newY);
+        // Ocupa la nueva celda
+        mapa.getCell(newX, newY).setOccupant(jugador);
+    }
 
         actualizarVista();
         isPlayerTurn = false;
@@ -310,6 +340,12 @@ public class ControladorDeJuego {
                     && mapa.getCell(nuevoX, nuevoY).getOccupant() == null) {
                 opciones.add(dir);
             }
+            int nx = enemigo.getX() + dir[0];
+            int ny = enemigo.getY() + dir[1];
+            // Usamos esPosicionValida para validar límites, suelo y ocupante
+            if (mapa.esPosicionValida(nx, ny)) {
+                opciones.add(dir);
+            }
         }
 
         if (!opciones.isEmpty()) {
@@ -394,28 +430,87 @@ public class ControladorDeJuego {
         return (dx + dy == 1);
     }
 
-    private void cargarNuevoNivel(String rutaArchivo) {
-        try (BufferedReader br = new BufferedReader(
-                new InputStreamReader(getClass().getResourceAsStream(rutaArchivo)))) {
-            List<String> lineas = new ArrayList<>();
-            String linea;
-            while ((linea = br.readLine()) != null) {
-                lineas.add(linea);
+private void cargarNuevoNivel(String rutaArchivo) {
+    try (BufferedReader br = new BufferedReader(
+             new InputStreamReader(getClass().getResourceAsStream(rutaArchivo)))) {
+
+        // 1) Leer y crear mapa
+        List<String> lineas = new ArrayList<>();
+        String linea;
+        while ((linea = br.readLine()) != null) {
+            lineas.add(linea);
+        }
+        mapa = new JuegoMap(lineas);
+
+        // 2) Limpiar ocupantes antiguos (jugador lo re-colocamos luego)
+        for (int y = 0; y < mapa.getGrid().length; y++) {
+            for (int x = 0; x < mapa.getGrid()[0].length; x++) {
+                Cell c = mapa.getCell(x, y);
+                if (c.getOccupant() instanceof Enemigo) {
+                    c.setOccupant(null);
+                }
             }
+        }
+        mapa.getEnemigos().clear();
 
-            mapa = new JuegoMap(lineas);
-            mapa.addEnemigo(new Enemigo("Orco Jefe", 20, 5, 5, 5));
+        // 3) Añadir orcos según el nivel
+        if (rutaArchivo.endsWith("Nivel1.txt")) {
+            // Un único orco en (5,5) —ajústalo a tu mapa
+            Enemigo orco1 = new Enemigo("Orco", 20, 5, 5, 5);
+            mapa.addEnemigo(orco1);
+            mapa.getCell(5, 5).setOccupant(orco1);
+        } else {
+            // Dos orcos en Nivel2, en (5,5) y (7,3) por ejemplo
+            Enemigo orco1 = new Enemigo("Orco A", 20, 5, 5, 5);
+            Enemigo orco2 = new Enemigo("Orco B", 20, 5, 7, 3);
+            mapa.addEnemigo(orco1);
+            mapa.addEnemigo(orco2);
+            mapa.getCell(5, 5).setOccupant(orco1);
+            mapa.getCell(7, 3).setOccupant(orco2);
+        }
 
-            jugador.setPosicion(0, 0);
-            jugador.setLimites(mapa.getGrid()[0].length, mapa.getGrid().length);
+        // 4) Colocar al jugador en el primer suelo libre
+        colocarJugadorEnSuelo();
+        jugador.setLimites(mapa.getGrid()[0].length, mapa.getGrid().length);
 
-            actualizarVista();
+        // 5) Refrescar UI y reiniciar turnos
+        actualizarVista();
+        initTurnQueue();
+        nextTurn();
 
-        } catch (IOException e) {
-            System.err.println("Error al cargar el nuevo nivel");
-            e.printStackTrace();
+        // 6) Re-ligar teclado a la escena
+        Platform.runLater(() -> {
+            Scene scene = gridPane.getScene();
+            scene.setOnKeyPressed(evt -> manejarTeclado(evt));
+            scene.getRoot().requestFocus();
+        });
+
+    } catch (IOException e) {
+        System.err.println("Error al cargar el nuevo nivel: " + e.getMessage());
+        e.printStackTrace();
+    }
+}
+
+    /**
+ * Encuentra la primera celda de tipo FLOOR sin ocupante
+ * y posiciona allí al jugador (ajusta x,y en el objeto).
+ */
+private void colocarJugadorEnSuelo() {
+    Cell[][] grid = mapa.getGrid();
+    for (int fila = 0; fila < grid.length; fila++) {
+        for (int col = 0; col < grid[fila].length; col++) {
+            Cell celda = grid[fila][col];
+            if (celda.getType() == Cell.Type.FLOOR && celda.getOccupant() == null) {
+                // Ajusta coordenadas
+                jugador.setX(col);
+                jugador.setY(fila);
+                // Marca al jugador en esa celda
+                celda.setOccupant(jugador);
+                return;
+            }
         }
     }
+}
 
     private void verificarVictoria() {
         boolean todosMuertos = mapa.getEnemigos().stream().allMatch(e -> !e.isAlive());
