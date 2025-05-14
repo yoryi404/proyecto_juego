@@ -62,12 +62,12 @@ public class ControladorPrincipal {
 
             // Creamos y configuramos la nueva escena
             Scene escenaJuego = new Scene(root);
-            escenaJuego.setOnKeyPressed(controladorDeJuego::manejarTeclado);
 
             // Esperamos a que gridMapa tenga escena antes de hacer el cambio
             javafx.application.Platform.runLater(() -> {
                 Stage stage = (Stage) gridMapa.getScene().getWindow();
                 stage.setScene(escenaJuego);
+                escenaJuego.getRoot().requestFocus();
                 stage.show();
             });
 

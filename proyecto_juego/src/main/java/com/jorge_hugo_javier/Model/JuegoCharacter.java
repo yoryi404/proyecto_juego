@@ -5,6 +5,7 @@ public abstract class JuegoCharacter {
     protected int health;
     protected int attack;
     protected int x, y;
+    protected int velocidad = 0;
 
     public JuegoCharacter(String name, int health, int attack, int x, int y) {
         this.name = name;
@@ -60,6 +61,14 @@ public abstract class JuegoCharacter {
 
     public String getName() {
         return name;
+    }
+
+    public int getVelocidad() {
+         return velocidad;
+    }
+
+    public String getNombre() {
+         return name;
     }
 
     // Setters

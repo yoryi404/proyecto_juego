@@ -5,7 +5,9 @@
 <?import javafx.scene.image.ImageView?>
 
 <BorderPane xmlns="http://javafx.com/javafx/8" xmlns:fx="http://javafx.com/fxml/1"
-            fx:controller="com.jorge_hugo_javier.Controlador.ControladorDeJuego">
+            fx:controller="com.jorge_hugo_javier.Controlador.ControladorDeJuego"
+            focusTraversable="true"
+            onKeyPressed="#manejarTeclado">
 
     <!-- ✅ BARRAS DE VIDA -->
     <top>
@@ -17,6 +19,12 @@
                         <ProgressBar fx:id="vidaJugadorBarra" prefWidth="300.0" progress="1.0" />
                     </children>
                 </VBox>
+
+                <!-- ► Etiqueta de turno -->
+                <Label fx:id="turnLabel"
+                       text="Turno de: –"
+                       style="-fx-font-size: 16px; -fx-font-weight: bold;" />
+
                 <VBox alignment="CENTER">
                     <children>
                         <Label text="Vida del Enemigo" />
