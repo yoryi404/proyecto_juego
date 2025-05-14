@@ -17,7 +17,11 @@ import javafx.scene.control.Alert.AlertType;
 import com.jorge_hugo_javier.Model.Jugador;
 
 import java.io.IOException;
-
+/**
+ * Controlador para la vista de creación de personaje.
+ * Permite al usuario introducir los atributos de un nuevo jugador
+ * y cargar la escena principal del juego si los datos son válidos.
+ */
 public class CreacionPersonaje {
 
     @FXML private TextField nombreField;
@@ -26,6 +30,11 @@ public class CreacionPersonaje {
     @FXML private TextField defensaField;
     @FXML private TextField velocidadField;
 
+    /**
+     * Crea un nuevo personaje a partir de los valores introducidos en los campos de texto.
+     * Valida que los valores numéricos estén dentro del rango permitido (0-100),
+     * y carga la vista principal del juego si los datos son correctos.
+     */
     @FXML
     private void crearPersonaje() {
         try {
@@ -59,7 +68,14 @@ public class CreacionPersonaje {
             e.printStackTrace();
         }
     }
-
+/**
+     * Parsea y valida un valor numérico introducido en un campo de texto.
+     *
+     * @param texto el texto a convertir en número
+     * @param campo el nombre del campo (para mostrar en errores)
+     * @return el valor numérico si es válido
+     * @throws NumberFormatException si el valor no es un número válido o está fuera de rango
+     */
     private int parseCampo(String texto, String campo) throws NumberFormatException {
         int valor = Integer.parseInt(texto);
         if (valor < 0) {
@@ -70,7 +86,12 @@ public class CreacionPersonaje {
         }
         return valor;
     }
-
+/**
+     * Muestra una alerta de error al usuario.
+     *
+     * @param titulo  el título de la ventana de alerta
+     * @param mensaje el contenido del mensaje de error
+     */
     private void mostrarAlerta(String titulo, String mensaje) {
         Alert alert = new Alert(AlertType.ERROR);
         alert.setTitle(titulo);

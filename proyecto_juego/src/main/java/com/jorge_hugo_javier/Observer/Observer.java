@@ -4,7 +4,10 @@
  * @author Javier Gil Garán
  */
 package com.jorge_hugo_javier.Observer;
-
+/**
+ * Interfaz que representa un observador en el patrón Observer.
+ * Se utiliza para recibir notificaciones de cambio por parte de objetos observables (subjects).
+ */
 public interface Observer {
     /**
      * Llamado cuando un Subject notifica un cambio.

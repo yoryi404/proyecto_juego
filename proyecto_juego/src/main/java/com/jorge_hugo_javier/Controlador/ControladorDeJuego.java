@@ -47,6 +47,14 @@ import javafx.util.Duration;
 import com.jorge_hugo_javier.Observer.Observer;
 import com.jorge_hugo_javier.Model.Enemigo;
 
+/**
+ * Controlador principal del juego que gestiona la lógica de combate,
+ * los turnos y la interacción entre el jugador, los enemigos y el mapa.
+ * Utiliza JavaFX para enlazar con la vista, incluyendo etiquetas, barras de
+ * vida,
+ * y botones, para representar visualmente el estado del juego.
+ */
+
 public class ControladorDeJuego implements Observer {
     /** Barra de progreso que representa la vida del jugador. */
     @FXML
@@ -579,6 +587,7 @@ public class ControladorDeJuego implements Observer {
     /**
      * Carga un nuevo nivel desde un archivo, reinicia el mapa y la lógica del
      * juego.
+     * 
      * @param rutaArchivo Ruta al archivo de nivel (por ejemplo, "Nivel1.txt").
      */
     private void cargarNuevoNivel(String rutaArchivo) {
